@@ -1,0 +1,310 @@
+@import "$css/variables.css";
+
+/* Minimalist flat styles with gentle dark pastel green theme */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--header-footer-bg);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--button-bg);
+    border-radius: 0px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--button-hover-bg);
+  }
+
+  * {
+    color: var(--text-color);
+  }
+
+  body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: "Recursive", sans-serif;
+    font-variation-settings: "MONO" 0, "CASL" 0, "wght" 300, "slnt" 0,
+      "CRSV" 0.5;
+  }
+
+  h1 {
+    @apply text-4xl font-bold;
+    font-variation-settings: "MONO" 0, "CASL" 0.8, "wght" 700, "slnt" 0,
+      "CRSV" 0.9;
+  }
+
+  h2 {
+    @apply text-3xl font-bold;
+    font-variation-settings: "MONO" 0, "CASL" 0.7, "wght" 650, "slnt" 0,
+      "CRSV" 0.85;
+  }
+
+  h3 {
+    @apply text-2xl font-bold;
+    font-variation-settings: "MONO" 0, "CASL" 0.6, "wght" 600, "slnt" 0,
+      "CRSV" 0.8;
+  }
+
+  h4 {
+    @apply text-xl font-semibold;
+    font-variation-settings: "MONO" 0, "CASL" 0.5, "wght" 550, "slnt" 0,
+      "CRSV" 0.75;
+  }
+
+  h5 {
+    @apply text-lg font-semibold;
+    font-variation-settings: "MONO" 0, "CASL" 0.4, "wght" 500, "slnt" 0,
+      "CRSV" 0.7;
+  }
+
+  h6 {
+    @apply text-sm font-semibold;
+    font-variation-settings: "MONO" 0, "CASL" 0.3, "wght" 450, "slnt" 0,
+      "CRSV" 0.6;
+  }
+
+  a {
+    @apply text-[var(--link-color)] hover:text-[var(--link-hover-color)] no-underline;
+    font-variation-settings: "MONO" 0, "CASL" 0, "wght" 450, "slnt" 0,
+      "CRSV" 0.5;
+    /* Reduced transition complexity */
+    transition: color 0.2s ease;
+  }
+
+  a:hover {
+    font-variation-settings: "MONO" 0, "CASL" 0, "wght" 600, "slnt" 0,
+      "CRSV" 0.5;
+  }
+
+  a,
+  a:visited,
+  a:hover,
+  a:active,
+  a:focus {
+    text-decoration: none !important;
+  }
+
+  /* Last.FM info styles */
+  .recent-played {
+    @apply text-center;
+  }
+
+  .recent-track-info {
+    @apply space-y-0.5;
+  }
+
+  /* Header links - simplified transitions */
+  header a,
+  a.font-medium {
+    @apply no-underline hover:no-underline inline-block;
+    /* Only animate on hover, not constantly */
+    transition: transform 0.2s ease;
+  }
+
+  header a:hover,
+  a.font-medium:hover {
+    transform: scale(1.1);
+  }
+
+  /* Typography styles for blog content */
+  .prose {
+    @apply max-w-none;
+  }
+
+  /* Left-align headings in blog posts */
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4,
+  .prose h5,
+  .prose h6 {
+    @apply text-left;
+  }
+
+  /* Left-align paragraphs and lists */
+  .prose p,
+  .prose ul,
+  .prose ol {
+    @apply text-left;
+  }
+
+  .prose img {
+    @apply border-0 rounded-lg mx-auto;
+  }
+
+  a {
+    color: var(--link-color);
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: var(--link-hover-color);
+    text-decoration: none;
+  }
+
+  /* Update prose elements to use variables */
+  .prose a {
+    color: var(--link-color);
+    text-decoration: none;
+  }
+
+  .prose a:hover {
+    color: var(--link-hover-color);
+  }
+
+  .prose blockquote {
+    @apply border-l-2 pl-4 rounded-none mx-auto;
+    border-color: var(--button-bg);
+    background-color: var(--card-bg);
+  }
+
+  .prose code {
+    background-color: var(--card-bg);
+    @apply rounded px-1 font-mono;
+  }
+
+  .prose pre {
+    background-color: var(--card-bg);
+    @apply rounded-md mx-auto text-left font-mono p-4 overflow-x-auto;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+    line-height: 1.5;
+  }
+
+  .prose pre code {
+    @apply bg-transparent p-0;
+  }
+
+  /* Post grid and cards - simplified animations */
+  .post-card {
+    @apply border-0 rounded-none p-4 shadow-md;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    /* Only animate specific properties on hover */
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  }
+
+  .post-card:hover {
+    background-color: var(--header-footer-bg);
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Profile banner - simplified */
+  .profile-banner {
+    @apply bg-cover bg-center rounded-md border-0;
+    transition: opacity 0.2s ease;
+  }
+
+  .profile-banner:hover {
+    opacity: 0.95;
+  }
+
+  /* Profile section elements */
+  .flex-wrap {
+    @apply gap-4 items-center;
+  }
+
+  div.items-center {
+    @apply p-3;
+  }
+
+  .rounded-full {
+    @apply shadow-none;
+    transition: transform 0.2s ease;
+  }
+
+  .rounded-full:hover {
+    transform: scale(1.05);
+  }
+
+  /* Account handle and related info */
+  h4.content-around,
+  h6.content-around {
+    @apply my-2 text-left;
+  }
+
+  /* Links styling within the profile section - simplified */
+  .profile-banner a,
+  .flex-wrap a,
+  div.items-center a,
+  h4.content-around a,
+  h6.content-around a {
+    @apply no-underline hover:no-underline inline-block;
+    color: var(--link-color);
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+
+  .profile-banner a:hover,
+  .flex-wrap a:hover,
+  div.items-center a:hover,
+  h4.content-around a:hover,
+  h6.content-around a:hover {
+    color: var(--link-hover-color);
+    transform: scale(1.1);
+  }
+
+  /* Remove any borders throughout profile section */
+  .profile-banner,
+  .profile-banner *,
+  .flex-wrap *,
+  div.items-center *,
+  .rounded-full,
+  h4.content-around *,
+  h6.content-around * {
+    @apply border-0;
+  }
+
+  /* Comments section styling */
+  :global(.comments-section) {
+    @apply mt-8 p-4 border-0 rounded-md bg-[var(--header-footer-bg)];
+  }
+
+  :global(.comments-section input, .comments-section button) {
+    @apply bg-[var(--button-bg)] border-0 rounded-sm;
+  }
+}
+
+.prose+.flex.justify-between {
+  @apply mt-12 mb-8;
+}
+
+.prose+.flex.justify-between a {
+  @apply max-w-[45%] truncate;
+}
+
+.prose+.flex.justify-between a:first-child {
+  @apply text-left;
+}
+
+.prose+.flex.justify-between a:last-child {
+  @apply text-right;
+}
+
+.text-link {
+  color: var(--link-color);
+}
+
+.text-link-hover,
+.text-link:hover {
+  color: var(--link-hover-color);
+}
+
+.text-primary {
+  color: var(--text-color);
+}
+
+.text-muted {
+  color: var(--link-color);
+  opacity: 0.8;
+}
