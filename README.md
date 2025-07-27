@@ -1,6 +1,6 @@
 # Website Template
 
-[![Project Status: Unmaintained – The project has reached a stable, usable state but is no longer actively maintained. Issues/pull requests will not be addressed.](https://www.repostatus.org/badges/latest/unmaintained.svg)](https://www.repostatus.org/#unmaintained)
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 
 This repository offers a template for building a frontend for [WhiteWind](https://whtwnd.com/), a Markdown blog service utilising [ATProto](https://atproto.com/). It is based on a customised version of [WhiteBreeze](https://github.com/hugeblank/whitebreeze), specifically derived from commit [ff402f3](https://github.com/ewanc26/website/commit/ff402f3460d86c40ead13294ae1ff5d8605f741c) of [my website](https://github.com/ewanc26/website).
 
