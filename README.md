@@ -2,13 +2,13 @@
 
 [![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 
-This repository offers a template for building a frontend for [WhiteWind](https://whtwnd.com/), a Markdown blog service utilising [ATProto](https://atproto.com/). It is based on a customised version of [WhiteBreeze](https://github.com/hugeblank/whitebreeze), specifically derived from commit [ff402f3](https://github.com/ewanc26/website/commit/ff402f3460d86c40ead13294ae1ff5d8605f741c) of [my website](https://github.com/ewanc26/website).
+This repository provides a versatile frontend template, primarily designed for [WhiteWind](https://whtwnd.com/), a Markdown blog service utilising [ATProto](https://atproto.com/). It is built upon a customised version of [WhiteBreeze](https://github.com/hugeblank/whitebreeze), specifically derived from commit [ff402f3](https://github.com/ewanc26/website/commit/ff402f3460d86c40ead13294ae1ff5d8605f741c) of [my website](https://github.com/ewanc26/website).
 
-This template is designed to facilitate the rapid setup of a WhiteWind-compatible frontend, providing a pre-configured starting point with a structure ready for customisation.
+This template offers a pre-configured starting point with a robust structure, ready for customisation across various frontend projects, though its core focus remains WhiteWind compatibility.
 
 ## Purpose
 
-This project serves as a foundational template for creating WhiteWind-compatible blog frontends, leveraging the WhiteBreeze framework to provide a robust and customisable base for displaying AT Protocol-based blog posts.
+This project serves as a foundational template to streamline the creation of WhiteWind-compatible blog frontends. It leverages the WhiteBreeze framework to provide a robust and customisable base for displaying AT Protocol-based blog posts.
 
 ## Installation
 
