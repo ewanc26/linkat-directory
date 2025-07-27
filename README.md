@@ -1,0 +1,87 @@
+# Website Template
+
+[![Project Status: Unmaintained – The project has reached a stable, usable state but is no longer actively maintained. Issues/pull requests will not be addressed.](https://www.repostatus.org/badges/latest/unmaintained.svg)](https://www.repostatus.org/#unmaintained)
+
+This repository offers a template for building a frontend for [WhiteWind](https://whtwnd.com/), a Markdown blog service utilising [ATProto](https://atproto.com/). It is based on a customised version of [WhiteBreeze](https://github.com/hugeblank/whitebreeze), specifically derived from commit [ff402f3](https://github.com/ewanc26/website/commit/ff402f3460d86c40ead13294ae1ff5d8605f741c) of [my website](https://github.com/ewanc26/website).
+
+This template is designed to facilitate the rapid setup of a WhiteWind-compatible frontend, providing a pre-configured starting point with a structure ready for customisation.
+
+## Purpose
+
+This project serves as a foundational template for creating WhiteWind-compatible blog frontends, leveraging the WhiteBreeze framework to provide a robust and customisable base for displaying AT Protocol-based blog posts.
+
+## Installation
+
+To commence using this template, ensure Node.js and npm are installed on your system.
+
+### Prerequisites
+
+- Node.js (LTS version recommended)
+- npm (comes with Node.js)
+- Docker and Docker Compose (for Dockerised deployment)
+
+### Environment Variables
+
+Prior to running the application, configure the following environment variables within a `.env` file located in the project root:
+
+```ini
+PUBLIC_ATPROTOCOL_USER="myhandle.bsky.social" # Your handle, or DID
+```
+#### Note
+
+You should also add your DID to the `.static/.well-known/atproto-did` file if you want to use your domain as your AT Protocol handle.
+
+#### Optional Environment Variables
+
+- `PUBLIC_LASTFM_USERNAME`: Required for the Now Playing (Last.fm) feature in `src/lib/components/profile/Status.svelte`.
+- `PUBLIC_ACTIVITYPUB_USER=@user@server.tld`: Enables ActivityPub compatibility for improved content sharing and discoverability.
+
+## Usage
+
+### Development
+
+To run the project in development mode:
+
+```sh
+npm install
+npm run dev
+```
+
+### Production
+
+For optimal production deployment, the following record types are required in your [AT Protocol repository](https://atproto.com/specs/repository):
+
+#### Required Records
+
+- `app.bsky.actor.profile`: Your profile.
+- `com.whtwnd.blog.entry`: Your blog posts.
+- `blue.linkat.board`: Your links.
+
+### Deployment
+
+#### Standalone
+
+To build and run the project as a standalone application:
+
+```sh
+npm install
+npm run build
+node index.js
+```
+
+Environment variables can be set before the last command, and the port can be configured with the `PORT` variable.
+
+#### Dockerised
+
+To deploy using Docker:
+
+1. Modify `compose.yaml` to change the host port if necessary.
+2. Run the following command:
+
+```sh
+docker compose up -d
+```
+
+## Licensing
+
+This project is a template based on WhiteBreeze. For comprehensive licensing details, please consult the `LICENSE` file within this repository.
