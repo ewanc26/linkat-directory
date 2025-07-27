@@ -32,6 +32,10 @@ You should also add your DID to the `.static/.well-known/atproto-did` file if yo
 - `PUBLIC_LASTFM_USERNAME`: Required for the Now Playing (Last.fm) feature in `src/lib/components/profile/Status.svelte`.
 - `PUBLIC_ACTIVITYPUB_USER=@user@server.tld`: Enables ActivityPub compatibility for improved content sharing and discoverability.
 
+#### Embed Images
+
+While the `./static/embed/` directory is currently empty, it is intended for social media embed images. By default, the system will look for `blog.png` or `main.png` within this directory. For optimal display, these images should have dimensions of 630x1200 pixels.
+
 ## Usage
 
 ### Development
