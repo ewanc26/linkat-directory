@@ -6,10 +6,6 @@ This repository provides a versatile frontend template, primarily designed for [
 
 This template offers a pre-configured starting point with a robust structure, ready for customisation across various frontend projects, though its core focus remains WhiteWind compatibility.
 
-## Purpose
-
-This project serves as a foundational template to streamline the creation of WhiteWind-compatible blog frontends. It leverages the WhiteBreeze framework to provide a robust and customisable base for displaying AT Protocol-based blog posts.
-
 ## Installation
 
 To commence using this template, ensure Node.js and npm are installed on your system.
