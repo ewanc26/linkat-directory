@@ -20,7 +20,7 @@ export async function safeFetch(url: string, fetch: typeof globalThis.fetch) {
 }
 
 export async function getProfile(fetch: typeof globalThis.fetch): Promise<Profile> {
-  const cacheKey = `profile_${env.PUBLIC_ATPROTOCOL_USER}`;
+  const cacheKey = `profile_${env.DIRECTORY_OWNER}`;
   let profile: Profile | null = getCache<Profile>(cacheKey);
 
   if (profile) {
@@ -29,7 +29,7 @@ export async function getProfile(fetch: typeof globalThis.fetch): Promise<Profil
 
   try {
     const fetchProfile = await safeFetch(
-      `https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${env.PUBLIC_ATPROTOCOL_USER}`,
+      `https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${env.DIRECTORY_OWNER}`,
       fetch
     );
     const split = fetchProfile["did"].split(":");
