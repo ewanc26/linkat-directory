@@ -1,26 +1,3 @@
-/**
- * Represents a blog post with its content and metadata.
- */
-export interface Post {
-  postNumber?: number;
-  title: string; // The title of the post.
-  rkey: string; // A unique key for the post.
-  createdAt: Date; // The date and time the post was created.
-  content: string; // The content of the post, parsed to HTML.
-  excerpt: string; // A plain text excerpt for meta descriptions.
-  wordCount: number; // The word count for reading time calculation.
-}
-
-/**
- * Represents a blog post in its raw Markdown format.
- */
-export interface MarkdownPost {
-  title: string; // The title of the post.
-  rkey: string; // A unique key for the post.
-  createdAt: Date; // The date and time the post was created.
-  mdcontent: string; // The raw Markdown content of the post.
-}
-
 // Define the type for the fetched links data
 /**
  * Represents a single link card with a URL, text, and an emoji.
@@ -29,6 +6,26 @@ export interface LinkCard {
   url: string; // The URL of the link.
   text: string; // The display text for the link.
   emoji: string; // An emoji associated with the link.
+}
+
+/**
+ * Represents the properties for the DynamicHead component.
+ */
+export interface DynamicHeadProps {
+  title: string;
+  description: string;
+  keywords: string;
+  ogUrl?: string;
+  ogTitle: string;
+  ogDescription: string;
+  ogImage?: string;
+  ogImageWidth?: string;
+  ogImageHeight?: string;
+  twitterCard?: string;
+  twitterUrl?: string;
+  twitterTitle: string;
+  twitterDescription: string;
+  twitterImage?: string;
 }
 
 /**
@@ -51,8 +48,7 @@ export interface Theme {
  * Represents public environment variables.
  */
 export interface PublicEnv {
-  PUBLIC_ATPROTOCOL_USER: string; // Public user for ATProtocol.
-  PUBLIC_ACTIVITYPUB_USER: string; // Public user for ActivityPub.
+  DIRECTORY_OWNER: string; // Public user for ATProtocol.
 }
 
 /**
@@ -69,29 +65,12 @@ export interface Profile {
 }
 
 /**
- * Represents a status update or a short message.
+ * Represents a user with basic details.
  */
-export interface StatusUpdate {
-  text: string; // The content of the status update.
-  createdAt: Date; // The date and time the status update was created.
-  tid: string; // A unique identifier for the status update.
-}
-
-/**
- * Properties for displaying recent content, possibly from a feed or similar source.
- */
-export interface RecentFMProps {
-    nomoji?: boolean; // Optional flag to disable emojis.
-    displayName?: string; // Optional display name.
-  }
-
-/**
- * Represents the result of the BlogService, containing posts, profile, and utility functions.
- */
-export interface BlogServiceResult {
-  posts: Map<string, Post>;
-  profile: Profile;
-  sortedPosts: Post[];
-  getPost: (rkey: string) => Post | null;
-  getAdjacentPosts: (rkey: string) => { previous: Post | null; next: Post | null };
+export interface User {
+  did: string;
+  handle?: string;
+  displayName?: string;
+  avatar?: string;
+  description?: string;
 }

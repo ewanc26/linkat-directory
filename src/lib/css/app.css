@@ -1,13 +1,13 @@
 @import "$css/variables.css";
 
-/* Minimalist flat styles with gentle dark pastel green theme */
+/* Linkat Directory - Core CSS Styles */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
 
-  /* Scrollbar styling */
+  /* Custom scrollbar styling for webkit browsers */
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -33,58 +33,41 @@
   body {
     background-color: var(--background-color);
     color: var(--text-color);
-    font-family: "Recursive", sans-serif;
-    font-variation-settings: "MONO" 0, "CASL" 0, "wght" 300, "slnt" 0,
-      "CRSV" 0.5;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
 
   h1 {
     @apply text-4xl font-bold;
-    font-variation-settings: "MONO" 0, "CASL" 0.8, "wght" 700, "slnt" 0,
-      "CRSV" 0.9;
   }
 
   h2 {
     @apply text-3xl font-bold;
-    font-variation-settings: "MONO" 0, "CASL" 0.7, "wght" 650, "slnt" 0,
-      "CRSV" 0.85;
   }
 
   h3 {
     @apply text-2xl font-bold;
-    font-variation-settings: "MONO" 0, "CASL" 0.6, "wght" 600, "slnt" 0,
-      "CRSV" 0.8;
   }
 
   h4 {
     @apply text-xl font-semibold;
-    font-variation-settings: "MONO" 0, "CASL" 0.5, "wght" 550, "slnt" 0,
-      "CRSV" 0.75;
   }
 
   h5 {
     @apply text-lg font-semibold;
-    font-variation-settings: "MONO" 0, "CASL" 0.4, "wght" 500, "slnt" 0,
-      "CRSV" 0.7;
   }
 
   h6 {
     @apply text-sm font-semibold;
-    font-variation-settings: "MONO" 0, "CASL" 0.3, "wght" 450, "slnt" 0,
-      "CRSV" 0.6;
   }
 
   a {
     @apply text-[var(--link-color)] hover:text-[var(--link-hover-color)] no-underline;
-    font-variation-settings: "MONO" 0, "CASL" 0, "wght" 450, "slnt" 0,
-      "CRSV" 0.5;
-    /* Reduced transition complexity */
+    /* Simplified hover transitions */
     transition: color 0.2s ease;
   }
 
   a:hover {
-    font-variation-settings: "MONO" 0, "CASL" 0, "wght" 600, "slnt" 0,
-      "CRSV" 0.5;
+    @apply font-semibold;
   }
 
   a,
@@ -93,15 +76,6 @@
   a:active,
   a:focus {
     text-decoration: none !important;
-  }
-
-  /* Last.FM info styles */
-  .recent-played {
-    @apply text-center;
-  }
-
-  .recent-track-info {
-    @apply space-y-0.5;
   }
 
   /* Header links - simplified transitions */
@@ -117,7 +91,7 @@
     transform: scale(1.1);
   }
 
-  /* Typography styles for blog content */
+  /* Typography styles for blog/prose content using Tailwind Typography plugin */
   .prose {
     @apply max-w-none;
   }
@@ -153,7 +127,7 @@
     text-decoration: none;
   }
 
-  /* Update prose elements to use variables */
+  /* Prose element styling with CSS variables for theme consistency */
   .prose a {
     color: var(--link-color);
     text-decoration: none;
@@ -184,111 +158,6 @@
   .prose pre code {
     @apply bg-transparent p-0;
   }
-
-  /* Post grid and cards - simplified animations */
-  .post-card {
-    @apply border-0 rounded-none p-4 shadow-md;
-    background-color: var(--card-bg);
-    color: var(--text-color);
-    /* Only animate specific properties on hover */
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-  }
-
-  .post-card:hover {
-    background-color: var(--header-footer-bg);
-    transform: scale(1.05);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  }
-
-  /* Profile banner - simplified */
-  .profile-banner {
-    @apply bg-cover bg-center rounded-md border-0;
-    transition: opacity 0.2s ease;
-  }
-
-  .profile-banner:hover {
-    opacity: 0.95;
-  }
-
-  /* Profile section elements */
-  .flex-wrap {
-    @apply gap-4 items-center;
-  }
-
-  div.items-center {
-    @apply p-3;
-  }
-
-  .rounded-full {
-    @apply shadow-none;
-    transition: transform 0.2s ease;
-  }
-
-  .rounded-full:hover {
-    transform: scale(1.05);
-  }
-
-  /* Account handle and related info */
-  h4.content-around,
-  h6.content-around {
-    @apply my-2 text-left;
-  }
-
-  /* Links styling within the profile section - simplified */
-  .profile-banner a,
-  .flex-wrap a,
-  div.items-center a,
-  h4.content-around a,
-  h6.content-around a {
-    @apply no-underline hover:no-underline inline-block;
-    color: var(--link-color);
-    transition: color 0.2s ease, transform 0.2s ease;
-  }
-
-  .profile-banner a:hover,
-  .flex-wrap a:hover,
-  div.items-center a:hover,
-  h4.content-around a:hover,
-  h6.content-around a:hover {
-    color: var(--link-hover-color);
-    transform: scale(1.1);
-  }
-
-  /* Remove any borders throughout profile section */
-  .profile-banner,
-  .profile-banner *,
-  .flex-wrap *,
-  div.items-center *,
-  .rounded-full,
-  h4.content-around *,
-  h6.content-around * {
-    @apply border-0;
-  }
-
-  /* Comments section styling */
-  :global(.comments-section) {
-    @apply mt-8 p-4 border-0 rounded-md bg-[var(--header-footer-bg)];
-  }
-
-  :global(.comments-section input, .comments-section button) {
-    @apply bg-[var(--button-bg)] border-0 rounded-sm;
-  }
-}
-
-.prose+.flex.justify-between {
-  @apply mt-12 mb-8;
-}
-
-.prose+.flex.justify-between a {
-  @apply max-w-[45%] truncate;
-}
-
-.prose+.flex.justify-between a:first-child {
-  @apply text-left;
-}
-
-.prose+.flex.justify-between a:last-child {
-  @apply text-right;
 }
 
 .text-link {

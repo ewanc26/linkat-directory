@@ -14,60 +14,62 @@
   });
 </script>
 
-<footer class="text-center py-4 text-primary text-sm opacity-60">
-  <div class="flex flex-col justify-center items-center gap-2">
-    <div>
+<footer class="text-center py-8 text-primary text-sm opacity-60">
+  <div class="max-w-2xl mx-auto px-4">
+    <!-- Main attribution line -->
+    <div class="mb-4">
       <span>&copy; <span id="copyright-year"></span></span>
-
-      <span class="mx-1"></span>
-
+      <span class="mx-2">•</span>
       {#if profile?.handle}
         <a
           href="https://bsky.app/profile/{profile.did}"
-          class="text-[var(--link-color)] hover:text-[var(--link-hover-color)]"
+          class="text-[var(--link-color)] hover:text-[var(--link-hover-color)] transition-colors"
         >
           @{profile.handle}
         </a>
       {:else}
         <span>{profile?.displayName || profile?.did}</span>
       {/if}
-
-      {#if env.PUBLIC_ACTIVITYPUB_USER && env.PUBLIC_ACTIVITYPUB_USER.length > 0 && profile?.handle}
-        <span class="mx-1"></span>
-      {/if}
-
-      {#if env.PUBLIC_ACTIVITYPUB_USER && env.PUBLIC_ACTIVITYPUB_USER.length > 0}
+      <span class="mx-2">•</span>
+      <span>powered by 
         <a
-          rel="me"
-          href={`https://${env.PUBLIC_ACTIVITYPUB_USER.split("@")[2]}/@${env.PUBLIC_ACTIVITYPUB_USER.split("@")[1]}`}
-          class="text-[var(--link-color)] hover:text-[var(--link-hover-color)]"
+          class="text-[var(--link-color)] hover:text-[var(--link-hover-color)] transition-colors"
+          href="https://atproto.com/guides/glossary#at-protocol"
         >
-          @{env.PUBLIC_ACTIVITYPUB_USER.split(
-            "@",
-          )[1]}@{env.PUBLIC_ACTIVITYPUB_USER.split("@")[2]}
+          atproto
         </a>
-      {/if}
+      </span>
     </div>
 
-    <div>
-      <span
-        >powered by <a
-          class="text-[var(--link-color)] hover:text-[var(--link-hover-color)]"
-          href="https://atproto.com/guides/glossary#at-protocol">atproto</a
-        ></span
-      >
+    <!-- Project info -->
+    <div class="mb-4 text-xs opacity-75 leading-relaxed">
+      <div class="mb-2">
+        Linkat Directory made by 
+        <a
+          class="text-[var(--link-color)] hover:text-[var(--link-hover-color)] transition-colors"
+          href="https://bsky.app/profile/did:plc:ofrbh253gwicbkc5nktqepol"
+        >
+          ewan
+        </a>
+      </div>
+      <div>
+        <a 
+          class="text-[var(--link-color)] hover:text-[var(--link-hover-color)] transition-colors" 
+          href="https://github.com/ewanc26/linkat-directory"
+        >
+          Open source
+        </a> 
+        and free to use. Not affiliated with 
+        <a 
+          class="text-[var(--link-color)] hover:text-[var(--link-hover-color)] transition-colors" 
+          href="https://linkat.blue"
+        >
+          Linkat
+        </a>
+      </div>
     </div>
 
-    <div>
-      <span>template made by <a
-        class="text-[var(--link-color)] hover:text-[var(--link-hover-color)]"
-        href="https://bsky.app/profile/did:plc:ofrbh253gwicbkc5nktqepol">ewan</a
-      ></span>
-    </div>
-
-    <div>
-      <span class="mx-1"></span>
-      <TidClock />
-    </div>
+    <!-- Clock -->
+    <TidClock />
   </div>
 </footer>
