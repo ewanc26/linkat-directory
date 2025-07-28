@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ArchiveCard } from "$components/archive";
+  import ArchiveCard from "$lib/components/archive/ArchiveCard.svelte";
   import type { LinkBoard } from "$components/shared";
 
   // Export the data prop that will receive the fetched links
@@ -12,7 +12,12 @@
       class="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr)_)] gap-x-6 gap-y-6 my-6"
     >
       {#each data.cards as link}
-        <ArchiveCard type="link" url={link.url} title={link.text} value={link.emoji} />
+        <ArchiveCard 
+          type="link"
+          url={link.url}
+          title={link.text}
+          value={link.emoji}
+        />
       {/each}
     </div>
   </div>
