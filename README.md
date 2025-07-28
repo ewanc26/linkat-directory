@@ -6,7 +6,7 @@
 
 ## Project Purpose
 
-Linkat Directory is a SvelteKit application designed to serve as a curated directory of links, primarily focusing on Bluesky profiles and content. It allows for the display of user profiles, including their Decentralised Identifiers (DIDs), handles, display names, avatars, and descriptions. The application is built with a focus on responsiveness and ease of use, providing a clean interface for discovering links.
+Linkat Directory is a SvelteKit application designed to serve as an alternate frontend to Linkat, providing a curated directory of links, primarily focusing on Bluesky profiles and content. It allows for the display of user profiles, including their Decentralised Identifiers (DIDs), handles, display names, avatars, and descriptions. The application is built with a focus on responsiveness and ease of use, providing a clean interface for discovering links.
 
 ## Installation
 
