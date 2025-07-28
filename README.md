@@ -1,87 +1,76 @@
-# Website Template
+# Linkat Directory
 
 [![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 
-This repository provides a versatile frontend template, primarily designed for [WhiteWind](https://whtwnd.com/), a Markdown blog service utilising [ATProto](https://atproto.com/). It is built upon a customised version of [WhiteBreeze](https://github.com/hugeblank/whitebreeze), specifically derived from commit [ff402f3](https://github.com/ewanc26/website/commit/ff402f3460d86c40ead13294ae1ff5d8605f741c) of [my website](https://github.com/ewanc26/website).
+<img src="./static/logo.png" alt="Linkat Directory" width="100"/>
 
-This template offers a pre-configured starting point with a robust structure, ready for customisation across various frontend projects, though its core focus remains WhiteWind compatibility.
+## Project Purpose
+
+Linkat Directory is a SvelteKit application designed to serve as a curated directory of links, primarily focusing on Bluesky profiles and content. It allows for the display of user profiles, including their Decentralised Identifiers (DIDs), handles, display names, avatars, and descriptions. The application is built with a focus on responsiveness and ease of use, providing a clean interface for discovering links.
 
 ## Installation
 
-To commence using this template, ensure Node.js and npm are installed on your system.
+To set up the Linkat Directory locally, follow these steps:
 
-### Prerequisites
+1.  **Clone the repository:**
+    ```bash
+    git clone git@github.com:ewanc26/linkat-directory.git
+    cd linkat-directory
+    ```
 
-- Node.js (LTS version recommended)
-- npm (comes with Node.js)
-- Docker and Docker Compose (for Dockerised deployment)
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
 
-### Environment Variables
+3.  **Configure environment variables:**
+    Create a `.env` file in the project root based on `.env.example`. At a minimum, you should define `DIRECTORY_OWNER` or `PUBLIC_LINKAT_USERS`.
+    
+    Example for a single directory owner:
+    ```
+    DIRECTORY_OWNER=did:plc:your-did-here
+    ```
+    
+    Example for multiple users:
+    ```
+    PUBLIC_LINKAT_USERS=did:plc:user1,did:web:user2
+    ```
 
-Prior to running the application, configure the following environment variables within a `.env` file located in the project root:
-
-```ini
-PUBLIC_ATPROTOCOL_USER="myhandle.bsky.social" # Your handle, or DID
-```
-#### Note
-
-You should also add your DID to the `.static/.well-known/atproto-did` file if you want to use your domain as your AT Protocol handle.
-
-#### Optional Environment Variables
-
-- `PUBLIC_LASTFM_USERNAME`: Required for the Now Playing (Last.fm) feature in `src/lib/components/profile/Status.svelte`.
-- `PUBLIC_ACTIVITYPUB_USER=@user@server.tld`: Enables ActivityPub compatibility for improved content sharing and discoverability.
-
-#### Embed Images
-
-While the `./static/embed/` directory is currently empty, it is intended for social media embed images. By default, the system will look for `blog.png` or `main.png` within this directory. For optimal display, these images should have dimensions of 630x1200 pixels.
+4.  **Run the development server:**
+    ```bash
+    npm run dev
+    ```
+    The application will be accessible at `http://localhost:5173`.
 
 ## Usage
 
-### Development
+Once the application is running, you can:
 
-To run the project in development mode:
+-   Browse the main directory page to see configured users.
+-   View individual user profiles by navigating to `/user/[did]`, where `[did]` is the user's Decentralised Identifier.
+-   The application dynamically generates Open Graph and Twitter metadata for improved social sharing.
 
-```sh
-npm install
-npm run dev
-```
+## Project Structure
 
-### Production
+Key directories and files:
 
-For optimal production deployment, the following record types are required in your [AT Protocol repository](https://atproto.com/specs/repository):
+-   `src/routes/`: Contains SvelteKit routes, including the main page (`+page.svelte`) and user profile pages (`user/[did]/+page.svelte`).
+-   `src/lib/components/`: Reusable Svelte components, such as `DynamicHead.svelte` for managing dynamic `<head>` content, and profile-related components.
+-   `src/lib/css/`: Global CSS styles, including `app.css` (for general styling) and `variables.css` (for CSS variables).
+-   `src/lib/utils/`: Utility functions, such as caching mechanisms.
+-   `src/lib/profile/profile.ts`: Logic for fetching and processing user profile data from Bluesky.
 
-#### Required Records
+## Contributing
 
-- `app.bsky.actor.profile`: Your profile.
-- `com.whtwnd.blog.entry`: Your blog posts.
-- `blue.linkat.board`: Your links.
+Contributions are welcome! Please ensure your code adheres to the project's coding standards, including British English for comments and documentation, and responsive design principles.
 
-### Deployment
+## Credits
 
-#### Standalone
+This project utilises data and concepts from:
 
-To build and run the project as a standalone application:
+-   [linkat.blue](https://linkat.blue) by [mkizka.dev](https://bsky.app/profile/did:plc:4gow62pk3vqpuwiwaslcwisa)
+-   [atproto.com](https://atproto.com) by [Bluesky](https://bsky.social)
 
-```sh
-npm install
-npm run build
-node index.js
-```
+## License
 
-Environment variables can be set before the last command, and the port can be configured with the `PORT` variable.
-
-#### Dockerised
-
-To deploy using Docker:
-
-1. Modify `compose.yaml` to change the host port if necessary.
-2. Run the following command:
-
-```sh
-docker compose up -d
-```
-
-## Licensing
-
-This project is a template based on WhiteBreeze. For comprehensive licensing details, please consult the `LICENSE` file within this repository.
+This project is licensed under the [GNU Affero General Public License Version 3](LICENSE).

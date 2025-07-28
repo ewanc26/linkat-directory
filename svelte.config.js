@@ -21,6 +21,9 @@ const config = {
 			'$css': './src/lib/css',
 			'$services': './src/lib/services',
 			'$utils': './src/lib/utils'
+		},
+		env: {
+			publicPrefix: ''
 		}
 	}
 };
