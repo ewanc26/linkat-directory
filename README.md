@@ -74,6 +74,7 @@ Key directories and files:
 -   `src/lib/css/`: Global CSS styles, including `app.css` (for general styling) and `variables.css` (for CSS variables).
 -   `src/lib/utils/`: Utility functions, such as caching mechanisms.
 -   `src/lib/profile/profile.ts`: Logic for fetching and processing user profile data from Bluesky.
+-   `svelte.config.js`: SvelteKit configuration, including prerendering settings. Note that the `origin` property in `prerender` has been removed for Vercel deployments to simplify the setup.
 
 ## Contributing
 
