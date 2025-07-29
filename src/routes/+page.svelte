@@ -6,6 +6,8 @@
   import DynamicHead from "$lib/components/layout/DynamicHead.svelte";
 
   let { data } = $props();
+  let displayUserBanner = $derived(data.displayUserBanner);
+let displayUserDescription = $derived(data.displayUserDescription);
 
   // State to track if locale has been properly loaded
   let localeLoaded = $state(false);
@@ -73,6 +75,6 @@
       </div>
     </div>
   {:else}
-    <UserDirectory users={data.linkatUsers.map(did => ({ did }))} primaryUserDid={data.primaryUserDid} userLinkBoards={data.userLinkBoards} />
+    <UserDirectory users={data.linkatUsers.map(did => ({ did }))} primaryUserDid={data.primaryUserDid} userLinkBoards={data.userLinkBoards} displayBanner={displayUserBanner} displayDescription={displayUserDescription} />
   {/if}
 </div>
