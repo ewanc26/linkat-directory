@@ -14,7 +14,7 @@ const config = {
 		adapter: adapter(),
 		prerender: {
 			entries: ['*'],
-			origin: ''
+			origin: process.env.PUBLIC_ORIGIN || 'http://localhost:5713'
 		},
 		alias: {
 			'$components': './src/lib/components',
