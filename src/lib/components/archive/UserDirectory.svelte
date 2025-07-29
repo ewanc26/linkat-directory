@@ -5,15 +5,21 @@
 
   export let users: User[];
   export let primaryUserDid: string | undefined;
+  export let userLinkBoards: { [did: string]: LinkBoard | undefined };
+  import type { LinkBoard } from "$lib/components/shared/interfaces";
 
   let loading = true;
   let userProfiles: any[] = [];
 
   onMount(async () => {
     if (users && users.length > 0) {
-      // Fetch profile data for each user
       const profiles = await Promise.all(
         users.map(async (user) => {
+          let enrichedUser = {
+            ...user,
+            hasLinks: !!userLinkBoards?.[user.did]?.cards?.length
+          };
+
           try {
             const response = await fetch(
               `https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${user.did}`
@@ -21,7 +27,7 @@
             if (response.ok) {
               const profile = await response.json();
               return {
-                did: user.did,
+                ...enrichedUser,
                 handle: profile.handle || user.handle,
                 displayName: profile.displayName || user.displayName,
                 avatar: profile.avatar,
@@ -32,7 +38,8 @@
           } catch (error) {
             console.error(`Error fetching profile for ${user.did}:`, error);
           }
-          return user; // Return original if fetch fails
+
+          return enrichedUser; // fallback if fetch fails
         })
       );
       userProfiles = profiles.filter(Boolean);
@@ -40,8 +47,15 @@
     loading = false;
   });
 
-  function navigateToUser(did: string) {
-    goto(`/user/${encodeURIComponent(did)}`);
+  function navigateToUser(user: any) {
+    const userBoard = userLinkBoards[user.did];
+    if (userBoard && userBoard.cards?.length > 0) {
+      goto(`/user/${encodeURIComponent(user.did)}`);
+    } else {
+      // Construct Bluesky profile URL
+      const blueskyHandle = user.did;
+      window.open(`https://bsky.app/profile/${blueskyHandle}`, '_blank');
+    }
   }
 </script>
 
@@ -68,7 +82,7 @@
         <button 
           class="user-card cursor-pointer rounded-lg p-6 transition-transform hover:scale-105 text-left w-full"
           style="background: var(--card-bg); border: 1px solid var(--border-color);"
-          onclick={() => navigateToUser(user.did)}
+          on:click={() => navigateToUser(user)}
         >
           {#if user.banner}
             <div 
@@ -108,9 +122,15 @@
           </div>
           
           <div class="mt-4 text-center">
-            <span class="text-sm text-link hover:text-link-hover">
-              View links →
-            </span>
+            {#if user.hasLinks}
+              <span class="text-sm text-link hover:text-link-hover">
+                View links →
+              </span>
+            {:else}
+              <span class="text-sm text-link hover:text-link-hover">
+                No links - View Bluesky profile →
+              </span>
+            {/if}
           </div>
         </button>
       {/each}
