@@ -41,6 +41,16 @@ To set up the Linkat Directory locally, follow these steps:
     HIDE_OWNER_CARD=true
     ```
 
+    Example for displaying the user banner (default: false):
+    ```
+    DISPLAY_USER_BANNER=true
+    ```
+
+    Example for controlling the display of the user description:
+    ```
+    DISPLAY_USER_DESCRIPTION=true
+    ```
+
 4.  **Run the development server:**
     ```bash
     npm run dev
