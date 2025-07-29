@@ -36,6 +36,11 @@ To set up the Linkat Directory locally, follow these steps:
     PUBLIC_LINKAT_USERS=did:plc:user1,did:web:user2
     ```
 
+    Example for hiding the directory owner's card:
+    ```
+    HIDE_OWNER_CARD=true
+    ```
+
 4.  **Run the development server:**
     ```bash
     npm run dev

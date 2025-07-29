@@ -4,6 +4,7 @@
   import type { User } from "$lib/components/shared/interfaces";
 
   export let users: User[];
+  export let primaryUserDid: string | undefined;
 
   let loading = true;
   let userProfiles: any[] = [];
@@ -52,7 +53,14 @@
     </div>
   {:else if userProfiles.length === 0}
     <div class="text-center py-8">
-      <p class="text-lg opacity-75">No users configured. Add users in the configuration file.</p>
+      <p class="text-lg opacity-75">
+        No users configured or found. Please check your configuration and ensure users have associated Linkat data. 
+        {#if primaryUserDid}
+          <br />Directory owner is set to: {primaryUserDid}
+        {:else}
+          <br />No directory owner is set.
+        {/if}
+      </p>
     </div>
   {:else}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
