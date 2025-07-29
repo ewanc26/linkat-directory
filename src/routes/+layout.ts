@@ -95,7 +95,14 @@ export async function load({ fetch }) {
     posts: new Map(),
     dynamicLinks,
     userLinkBoards,
-    linkatUsers: userDids,
+    linkatUsers: userDids.filter(did => {
+      const hideOwnerCard = env.HIDE_OWNER_CARD === 'true';
+      if (hideOwnerCard && did === primaryUserDid) {
+        return false; // Hide the owner's card if HIDE_OWNER_CARD is true
+      }
+      return userLinkBoards[did] !== undefined;
+    }),
     noUsersConfigured: false,
+    primaryUserDid,
   };
 }
