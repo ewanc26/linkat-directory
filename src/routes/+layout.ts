@@ -100,7 +100,7 @@ export async function load({ fetch }) {
       if (hideOwnerCard && did === primaryUserDid) {
         return false; // Hide the owner's card if HIDE_OWNER_CARD is true
       }
-      return userLinkBoards[did] !== undefined;
+      return true; // Always include the user if not hidden
     }),
     noUsersConfigured: false,
     primaryUserDid,
