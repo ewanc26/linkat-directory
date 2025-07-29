@@ -73,6 +73,6 @@
       </div>
     </div>
   {:else}
-    <UserDirectory users={data.linkatUsers.map(did => ({ did }))} />
+    <UserDirectory users={data.linkatUsers.map(did => ({ did }))} primaryUserDid={data.primaryUserDid} />
   {/if}
 </div>
