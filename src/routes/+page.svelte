@@ -7,7 +7,30 @@
 
   let { data } = $props();
   let displayUserBanner = $derived(data.displayUserBanner);
-let displayUserDescription = $derived(data.displayUserDescription);
+  let displayUserDescription = $derived(data.displayUserDescription);
+
+  /**
+   * Shuffles an array in place using the Fisher-Yates (Knuth) algorithm.
+   * @param array The array to shuffle.
+   * @returns The shuffled array.
+   */
+  function shuffleArray<T>(array: T[]): T[] {
+    let currentIndex = array.length, randomIndex;
+
+    // While there remain elements to shuffle.
+    while (currentIndex !== 0) {
+      // Pick a remaining element.
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex],
+        array[currentIndex],
+      ];
+    }
+    return array;
+  }
 
   // State to track if locale has been properly loaded
   let localeLoaded = $state(false);
@@ -75,6 +98,6 @@ let displayUserDescription = $derived(data.displayUserDescription);
       </div>
     </div>
   {:else}
-    <UserDirectory users={data.linkatUsers.map(did => ({ did }))} primaryUserDid={data.primaryUserDid} userLinkBoards={data.userLinkBoards} displayBanner={displayUserBanner} displayDescription={displayUserDescription} />
+    <UserDirectory users={shuffleArray([...data.linkatUsers]).map(did => ({ did }))} primaryUserDid={data.primaryUserDid} userLinkBoards={data.userLinkBoards} displayBanner={displayUserBanner} displayDescription={displayUserDescription} />
   {/if}
 </div>
