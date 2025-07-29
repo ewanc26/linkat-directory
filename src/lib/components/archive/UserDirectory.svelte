@@ -6,6 +6,8 @@
   export let users: User[];
   export let primaryUserDid: string | undefined;
   export let userLinkBoards: { [did: string]: LinkBoard | undefined };
+  export let displayBanner: boolean = false;
+  export let displayDescription: boolean = false;
   import type { LinkBoard } from "$lib/components/shared/interfaces";
 
   let loading = true;
@@ -31,7 +33,7 @@
                 handle: profile.handle || user.handle,
                 displayName: profile.displayName || user.displayName,
                 avatar: profile.avatar,
-                description: profile.description,
+                description: displayDescription ? profile.description : undefined,
                 banner: profile.banner
               };
             }
@@ -84,7 +86,7 @@
           style="background: var(--card-bg); border: 1px solid var(--border-color);"
           on:click={() => navigateToUser(user)}
         >
-          {#if user.banner}
+          {#if displayBanner}
             <div 
               class="w-full h-32 rounded-t-lg mb-4 bg-cover bg-center"
               style="background-image: url({user.banner});"
@@ -113,10 +115,8 @@
               <p class="text-sm opacity-75 truncate">
                 @{user.handle || user.did}
               </p>
-              {#if user.description}
-                <p class="text-sm mt-2 line-clamp-2 opacity-90">
-                  {user.description}
-                </p>
+              {#if displayDescription && user.description}
+              <p class="text-[var(--text-color)] mt-2">{user.description}</p>
               {/if}
             </div>
           </div>
@@ -137,13 +137,3 @@
     </div>
   {/if}
 </div>
-
-<style>
-  .line-clamp-2 {
-    display: -webkit-box;
-    line-clamp: 2;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-</style>

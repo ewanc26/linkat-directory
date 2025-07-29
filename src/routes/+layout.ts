@@ -96,7 +96,7 @@ export async function load({ fetch }) {
     dynamicLinks,
     userLinkBoards,
     linkatUsers: userDids.filter(did => {
-      const hideOwnerCard = env.HIDE_OWNER_CARD === 'true';
+       const hideOwnerCard = env.HIDE_OWNER_CARD === 'true';
       if (hideOwnerCard && did === primaryUserDid) {
         return false; // Hide the owner's card if HIDE_OWNER_CARD is true
       }
@@ -104,5 +104,7 @@ export async function load({ fetch }) {
     }),
     noUsersConfigured: false,
     primaryUserDid,
+    displayUserBanner: env.DISPLAY_USER_BANNER === 'true',
+displayUserDescription: env.DISPLAY_USER_DESCRIPTION === 'true',
   };
 }
