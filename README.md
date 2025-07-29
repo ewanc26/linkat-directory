@@ -55,7 +55,7 @@ To set up the Linkat Directory locally, follow these steps:
     ```bash
     npm run dev
     ```
-    The application will be accessible at `http://localhost:5173`.
+    The application will typically be accessible at `http://localhost:5173`. For prerendering, the `origin` defaults to `http://localhost:5713` unless the `PUBLIC_ORIGIN` environment variable is set.
 
 ## Usage
 
@@ -74,7 +74,7 @@ Key directories and files:
 -   `src/lib/css/`: Global CSS styles, including `app.css` (for general styling) and `variables.css` (for CSS variables).
 -   `src/lib/utils/`: Utility functions, such as caching mechanisms.
 -   `src/lib/profile/profile.ts`: Logic for fetching and processing user profile data from Bluesky.
--   `svelte.config.js`: SvelteKit configuration, including prerendering settings. Note that the `origin` property in `prerender` has been removed for Vercel deployments to simplify the setup.
+-   `svelte.config.js`: SvelteKit configuration, including prerendering settings. The `origin` property in `prerender` now defaults to `http://localhost:5713` unless overridden by the `PUBLIC_ORIGIN` environment variable.
 
 ## Contributing
 
