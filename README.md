@@ -47,9 +47,11 @@ To set up the Linkat Directory locally, follow these steps:
     ```
 
     Example for controlling the display of the user description:
-    ```
-    DISPLAY_USER_DESCRIPTION=true
-    ```
+```
+DISPLAY_USER_DESCRIPTION=true
+```
+
+Note: `DISPLAY_USER_DESCRIPTION` only affects the display of user descriptions on the home page cards.
 
 4.  **Run the development server:**
     ```bash
