@@ -59,7 +59,7 @@
         >
           Open source
         </a> 
-        and free to use. Not affiliated with 
+        and free to use under AGPL-3.0. Not affiliated with 
         <a 
           class="text-[var(--link-color)] hover:text-[var(--link-hover-color)] transition-colors" 
           href="https://linkat.blue"
