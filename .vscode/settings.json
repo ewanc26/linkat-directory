@@ -3,5 +3,8 @@
   "css.validate": false,
   "tailwindCSS.includeLanguages": {
     "svelte": "html"
-  }
+  },
+  "cSpell.words": [
+    "Linkat"
+  ]
 }
