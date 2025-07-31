@@ -2,24 +2,59 @@
   import DynamicLinks from "$lib/components/layout/main/DynamicLinks.svelte";
   import DynamicHead from "$lib/components/layout/DynamicHead.svelte";
   import { getStores } from "$app/stores";
+  import { env } from "$env/dynamic/public";
+  import { getProfile } from "$components/profile/profile";
+
   const { page } = getStores();
-  
   let { data } = $props();
-  
+
   let profile = $derived(data.profile);
   let dynamicLinks = $derived(data.dynamicLinks);
   let error = $derived(data.error);
   let did = $derived(data.did);
+
+  let directoryOwner = env.DIRECTORY_OWNER;
+  let ownerProfile = $state<{ displayName?: string; handle?: string } | null>(null);
+
+  $effect(() => {
+    if (directoryOwner) {
+      const loadOwner = async () => {
+        try {
+          const result = await getProfile(fetch);
+          ownerProfile = result;
+        } catch (err) {
+          console.error("Could not fetch owner profile:", err);
+          ownerProfile = null;
+        }
+      };
+      loadOwner();
+    }
+  });
+
+  const getDisplayName = (p: { displayName?: string; handle?: string } | null | undefined) =>
+    p?.displayName || p?.handle || null;
 </script>
 
 <DynamicHead
-  title={profile?.displayName || did + " - Linkat Directory"}
-  description={"View " + (profile?.displayName || did) + "'s curated Linkat links"}
-  ogTitle={profile?.displayName || did + " - Linkat Directory"}
-  ogDescription={"View " + (profile?.displayName || did) + "'s curated Linkat links"}
-  twitterTitle={profile?.displayName || did + " - Linkat Directory"}
-  twitterDescription={"View " + (profile?.displayName || did) + "'s curated Linkat links"}
-  keywords={`Linkat, directory, links, Bluesky, curation, ${profile?.displayName || did}`}
+  title={
+    directoryOwner
+      ? `${getDisplayName(profile) || did} – ${getDisplayName(ownerProfile) || directoryOwner}'s Linkat Directory`
+      : `${getDisplayName(profile) || did} – Linkat Directory`
+  }
+  description={`View ${getDisplayName(profile) || did}'s curated links in ${directoryOwner ? getDisplayName(ownerProfile) || directoryOwner + "'s" : "the"} Linkat Directory`}
+  ogTitle={
+    directoryOwner
+      ? `${getDisplayName(profile) || did} – ${getDisplayName(ownerProfile) || directoryOwner}'s Linkat Directory`
+      : `${getDisplayName(profile) || did} – Linkat Directory`
+  }
+  ogDescription={`View ${getDisplayName(profile) || did}'s curated links in ${directoryOwner ? getDisplayName(ownerProfile) || directoryOwner + "'s" : "the"} Linkat Directory`}
+  twitterTitle={
+    directoryOwner
+      ? `${getDisplayName(profile) || did} – ${getDisplayName(ownerProfile) || directoryOwner}'s Linkat Directory`
+      : `${getDisplayName(profile) || did} – Linkat Directory`
+  }
+  twitterDescription={`View ${getDisplayName(profile) || did}'s curated links in ${directoryOwner ? getDisplayName(ownerProfile) || directoryOwner + "'s" : "the"} Linkat Directory`}
+  keywords={`Linkat, directory, links, Bluesky, curation, ${getDisplayName(profile) || did}, ${getDisplayName(ownerProfile) || directoryOwner}`}
 />
 
 <div class="container mx-auto px-4 py-8">
