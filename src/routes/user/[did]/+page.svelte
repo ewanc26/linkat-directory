@@ -41,19 +41,31 @@
       ? `${getDisplayName(profile) || did} – ${getDisplayName(ownerProfile) || directoryOwner}'s Linkat Directory`
       : `${getDisplayName(profile) || did} – Linkat Directory`
   }
-  description={`View ${getDisplayName(profile) || did}'s curated links in ${directoryOwner ? getDisplayName(ownerProfile) || directoryOwner + "'s" : "the"} Linkat Directory`}
+  description={
+    directoryOwner
+      ? `View ${getDisplayName(profile) || did}'s curated links in ${getDisplayName(ownerProfile) || directoryOwner}'s Linkat Directory`
+      : `View ${getDisplayName(profile) || did}'s curated links in the Linkat Directory`
+  }
   ogTitle={
     directoryOwner
       ? `${getDisplayName(profile) || did} – ${getDisplayName(ownerProfile) || directoryOwner}'s Linkat Directory`
       : `${getDisplayName(profile) || did} – Linkat Directory`
   }
-  ogDescription={`View ${getDisplayName(profile) || did}'s curated links in ${directoryOwner ? getDisplayName(ownerProfile) || directoryOwner + "'s" : "the"} Linkat Directory`}
+  ogDescription={
+    directoryOwner
+      ? `View ${getDisplayName(profile) || did}'s curated links in ${getDisplayName(ownerProfile) || directoryOwner}'s Linkat Directory`
+      : `View ${getDisplayName(profile) || did}'s curated links in the Linkat Directory`
+  }
   twitterTitle={
     directoryOwner
       ? `${getDisplayName(profile) || did} – ${getDisplayName(ownerProfile) || directoryOwner}'s Linkat Directory`
       : `${getDisplayName(profile) || did} – Linkat Directory`
   }
-  twitterDescription={`View ${getDisplayName(profile) || did}'s curated links in ${directoryOwner ? getDisplayName(ownerProfile) || directoryOwner + "'s" : "the"} Linkat Directory`}
+  twitterDescription={
+    directoryOwner
+      ? `View ${getDisplayName(profile) || did}'s curated links in ${getDisplayName(ownerProfile) || directoryOwner}'s Linkat Directory`
+      : `View ${getDisplayName(profile) || did}'s curated links in the Linkat Directory`
+  }
   keywords={`Linkat, directory, links, Bluesky, curation, ${getDisplayName(profile) || did}, ${getDisplayName(ownerProfile) || directoryOwner}`}
 />
 
