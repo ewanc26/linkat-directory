@@ -1,11 +1,36 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import { getStores } from "$app/stores";
-  const { page } = getStores();
+  import { env } from "$env/dynamic/public";
   import UserDirectory from "$lib/components/archive/UserDirectory.svelte";
   import DynamicHead from "$lib/components/layout/DynamicHead.svelte";
+  import { getProfile } from "$lib/components/profile/profile";
 
+  const { page } = getStores();
   let { data } = $props();
+
+  // Environment variable for directory owner
+  let directoryOwner = env.DIRECTORY_OWNER ?? "";
+
+  // Profile state for directory owner
+  let ownerProfile = $state<{ displayName?: string; handle?: string } | null>(null);
+
+  // Load the directory owner's profile
+  $effect(() => {
+    if (directoryOwner) {
+      const loadOwner = async () => {
+        try {
+          const result = await getProfile(fetch);
+          ownerProfile = result;
+        } catch (err) {
+          console.error("Could not fetch owner profile:", err);
+          ownerProfile = null;
+        }
+      };
+      loadOwner();
+    }
+  });
+
+  // Derived reactive values for user display options
   let displayUserBanner = $derived(data.displayUserBanner);
   let displayUserDescription = $derived(data.displayUserDescription);
 
@@ -17,13 +42,10 @@
   function shuffleArray<T>(array: T[]): T[] {
     let currentIndex = array.length, randomIndex;
 
-    // While there remain elements to shuffle.
     while (currentIndex !== 0) {
-      // Pick a remaining element.
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex--;
 
-      // And swap it with the current element.
       [array[currentIndex], array[randomIndex]] = [
         array[randomIndex],
         array[currentIndex],
@@ -32,51 +54,42 @@
     return array;
   }
 
-  // State to track if locale has been properly loaded
-  let localeLoaded = $state(false);
-
-  onMount(() => {
-    // Set a brief timeout to ensure the browser has time to determine locale
-    setTimeout(() => {
-      localeLoaded = true;
-    }, 10);
-  });
-
-  import { getProfile } from "$lib/components/profile/profile";
-  let profile = $state<{ displayName?: string; handle?: string } | null>(null);
-  let loading = $state(true);
-  let error = $state<string | null>(null);
-
-  $effect(() => {
-    if (import.meta.env.DIRECTORY_OWNER) {
-      loading = true;
-      getProfile(fetch)
-        .then((p) => {
-          profile = p;
-          error = null;
-        })
-        .catch((err) => {
-          console.error('Failed to load profile:', err);
-          error = err.message;
-          profile = null;
-        })
-        .finally(() => {
-          loading = false;
-        });
-    } else {
-      loading = false;
-    }
-  });
+  const getDisplayName = (p: { displayName?: string; handle?: string } | null | undefined) =>
+    p?.displayName || p?.handle || null;
 </script>
 
 <DynamicHead
-  title={profile?.displayName || "Linkat Directory"}
-  description={profile?.displayName ? `Discover users' links curated by ${profile.displayName}` : "Discover amazing users curated by the Linkat community"}
-  keywords={`Linkat, directory, links, Bluesky, community, curation${profile?.displayName ? `, ${profile.displayName}` : ''}`}
-  ogTitle={profile?.displayName || "Linkat Directory"}
-  ogDescription={profile?.displayName ? `Discover users' links curated by ${profile.displayName}` : "Discover amazing users' links curated by the Linkat community"}
-  twitterTitle={profile?.displayName || "Linkat Directory"}
-  twitterDescription={profile?.displayName ? `Discover users' links curated by ${profile.displayName}` : "Discover amazing users' links curated by the Linkat community"}
+  title={
+    directoryOwner
+      ? `${getDisplayName(ownerProfile) || directoryOwner}'s Linkat Directory`
+      : "Linkat Directory"
+  }
+  description={
+    directoryOwner
+      ? `Discover users' links curated by ${getDisplayName(ownerProfile) || directoryOwner} in ${getDisplayName(ownerProfile) || directoryOwner}'s Linkat Directory`
+      : "Discover amazing users curated by the Linkat community"
+  }
+  keywords={`Linkat, directory, links, Bluesky, community, curation${directoryOwner ? `, ${getDisplayName(ownerProfile) || directoryOwner}` : ""}`}
+  ogTitle={
+    directoryOwner
+      ? `${getDisplayName(ownerProfile) || directoryOwner}'s Linkat Directory`
+      : "Linkat Directory"
+  }
+  ogDescription={
+    directoryOwner
+      ? `Discover users' links curated by ${getDisplayName(ownerProfile) || directoryOwner} in ${getDisplayName(ownerProfile) || directoryOwner}'s Linkat Directory`
+      : "Discover amazing users' links curated by the Linkat community"
+  }
+  twitterTitle={
+    directoryOwner
+      ? `${getDisplayName(ownerProfile) || directoryOwner}'s Linkat Directory`
+      : "Linkat Directory"
+  }
+  twitterDescription={
+    directoryOwner
+      ? `Discover users' links curated by ${getDisplayName(ownerProfile) || directoryOwner} in ${getDisplayName(ownerProfile) || directoryOwner}'s Linkat Directory`
+      : "Discover amazing users' links curated by the Linkat community"
+  }
 />
 
 <div class="container mx-auto px-4 py-8">
@@ -98,6 +111,12 @@
       </div>
     </div>
   {:else}
-    <UserDirectory users={shuffleArray([...data.linkatUsers]).map(did => ({ did }))} primaryUserDid={data.primaryUserDid} userLinkBoards={data.userLinkBoards} displayBanner={displayUserBanner} displayDescription={displayUserDescription} />
+    <UserDirectory
+      users={shuffleArray([...data.linkatUsers]).map(did => ({ did }))}
+      primaryUserDid={directoryOwner}
+      userLinkBoards={data.userLinkBoards}
+      displayBanner={displayUserBanner}
+      displayDescription={displayUserDescription}
+    />
   {/if}
 </div>
