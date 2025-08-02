@@ -11,12 +11,14 @@
   // Environment variable for directory owner
   let directoryOwner = env.DIRECTORY_OWNER ?? "";
 
-  // Profile state for directory owner
-  let ownerProfile = $state<{ displayName?: string; handle?: string } | null>(null);
+  // Profile state for directory owner - initialize with data.profile if available
+  let ownerProfile = $state<{ displayName?: string; handle?: string } | null>(
+    data.profile || null
+  );
 
-  // Load the directory owner's profile
+  // Load the directory owner's profile only if we don't already have it
   $effect(() => {
-    if (directoryOwner) {
+    if (directoryOwner && !ownerProfile) {
       const loadOwner = async () => {
         try {
           const result = await getProfile(fetch);
@@ -56,40 +58,44 @@
 
   const getDisplayName = (p: { displayName?: string; handle?: string } | null | undefined) =>
     p?.displayName || p?.handle || null;
+
+  // Computed title that prioritizes display name, then handle, then DID
+  const pageTitle = $derived(() => {
+    if (!directoryOwner) return "Linkat Directory";
+    
+    const displayName = getDisplayName(ownerProfile);
+    if (displayName) {
+      return `${displayName}'s Linkat Directory`;
+    }
+    
+    // Fallback to directoryOwner (DID) while loading
+    return `${directoryOwner}'s Linkat Directory`;
+  });
+
+  const pageDescription = $derived(() => {
+    if (!directoryOwner) return "Discover amazing users curated by the Linkat community";
+    
+    const displayName = getDisplayName(ownerProfile) || directoryOwner;
+    return `Discover users' links curated by ${displayName} in ${displayName}'s Linkat Directory`;
+  });
+
+  const pageKeywords = $derived(() => {
+    const baseKeywords = "Linkat, directory, links, Bluesky, community, curation";
+    if (!directoryOwner) return baseKeywords;
+    
+    const displayName = getDisplayName(ownerProfile) || directoryOwner;
+    return `${baseKeywords}, ${displayName}`;
+  });
 </script>
 
 <DynamicHead
-  title={
-    directoryOwner
-      ? `${getDisplayName(ownerProfile) || directoryOwner}'s Linkat Directory`
-      : "Linkat Directory"
-  }
-  description={
-    directoryOwner
-      ? `Discover users' links curated by ${getDisplayName(ownerProfile) || directoryOwner} in ${getDisplayName(ownerProfile) || directoryOwner}'s Linkat Directory`
-      : "Discover amazing users curated by the Linkat community"
-  }
-  keywords={`Linkat, directory, links, Bluesky, community, curation${directoryOwner ? `, ${getDisplayName(ownerProfile) || directoryOwner}` : ""}`}
-  ogTitle={
-    directoryOwner
-      ? `${getDisplayName(ownerProfile) || directoryOwner}'s Linkat Directory`
-      : "Linkat Directory"
-  }
-  ogDescription={
-    directoryOwner
-      ? `Discover users' links curated by ${getDisplayName(ownerProfile) || directoryOwner} in ${getDisplayName(ownerProfile) || directoryOwner}'s Linkat Directory`
-      : "Discover amazing users' links curated by the Linkat community"
-  }
-  twitterTitle={
-    directoryOwner
-      ? `${getDisplayName(ownerProfile) || directoryOwner}'s Linkat Directory`
-      : "Linkat Directory"
-  }
-  twitterDescription={
-    directoryOwner
-      ? `Discover users' links curated by ${getDisplayName(ownerProfile) || directoryOwner} in ${getDisplayName(ownerProfile) || directoryOwner}'s Linkat Directory`
-      : "Discover amazing users' links curated by the Linkat community"
-  }
+  title={pageTitle()}
+  description={pageDescription()}
+  keywords={pageKeywords()}
+  ogTitle={pageTitle()}
+  ogDescription={pageDescription()}
+  twitterTitle={pageTitle()}
+  twitterDescription={pageDescription()}
 />
 
 <div class="container mx-auto px-4 py-8">
