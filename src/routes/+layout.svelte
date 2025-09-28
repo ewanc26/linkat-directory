@@ -12,6 +12,6 @@
   <div class="box-border mx-auto px-4 sm:px-8 max-w-[1000px] pb-8">
     {@render children()}
 
-    <Footer profile={data.profile} posts={data.posts} />
+    <Footer profile={data.profile} />
   </div>
 </div>
