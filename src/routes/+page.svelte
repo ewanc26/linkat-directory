@@ -99,19 +99,20 @@
 />
 
 <div class="container mx-auto px-4 py-8">
-  {#if data.noUsersConfigured}
+{#if data.noUsersConfigured}
     <div class="text-center py-12">
-      <div class="max-w-md mx-auto">
+      <div class="max-w-4xl mx-auto px-4">
         <p class="text-lg mb-4 opacity-75">
           Welcome to Linkat Directory! No users are currently configured.
         </p>
-        <div class="bg-[var(--muted-bg)] rounded-lg p-6 text-left">
+        <div class="bg-[var(--muted-bg)] rounded-lg p-6 text-left overflow-hidden">
           <h3 class="font-semibold mb-2">To get started:</h3>
           <ol class="list-decimal list-inside space-y-2 text-sm">
-            <li>Create a <code>.env</code> file in your project root</li>
-            <li>Add your user DID: <code>DIRECTORY_OWNER=did:plc:your-did-here</code></li>
-            <li>Or add multiple users: <code>PUBLIC_LINKAT_USERS=did:plc:user1,did:web:user2</code></li>
-            <li>Restart the development server</li>
+            <li class="break-words">Copy <code class="break-all bg-[var(--card-bg)] px-1 py-0.5 rounded text-xs">. env.example</code> to <code class="break-all bg-[var(--card-bg)] px-1 py-0.5 rounded text-xs">.env</code></li>
+            <li class="break-words">Set your DID: <code class="break-all bg-[var(--card-bg)] px-1 py-0.5 rounded text-xs">DIRECTORY_OWNER=did:plc:your-did-here</code></li>
+            <li class="break-words">Set the origin: <code class="break-all bg-[var(--card-bg)] px-1 py-0.5 rounded text-xs">PUBLIC_ORIGIN=http://localhost:5713</code></li>
+            <li class="break-words">Optionally add more users: <code class="break-all bg-[var(--card-bg)] px-1 py-0.5 rounded text-xs">PUBLIC_LINKAT_USERS=did:plc:user1,did:plc:user2</code></li>
+            <li class="break-words">Restart the development server</li>
           </ol>
         </div>
       </div>
