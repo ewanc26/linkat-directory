@@ -92,3 +92,7 @@ This project utilises data and concepts from:
 ## License
 
 This project is licensed under the [GNU Affero General Public License Version 3](LICENSE).
+
+## ☕ Support
+
+If you found this useful, consider [buying me a ko-fi](https://ko-fi.com/ewancroft)!
