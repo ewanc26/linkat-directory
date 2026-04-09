@@ -2,8 +2,7 @@
   import ArchiveCard from "$lib/components/archive/ArchiveCard.svelte";
   import type { LinkBoard } from "$components/shared";
 
-  // Export the data prop that will receive the fetched links
-  export let data: LinkBoard | undefined;
+  let { data }: { data: LinkBoard | undefined } = $props();
 </script>
 
 {#if data && data.cards.length > 0}

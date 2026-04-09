@@ -1,52 +1,64 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import type { User } from "$lib/components/shared/interfaces";
-
-  export let users: User[];
-  export let primaryUserDid: string | undefined;
-  export let userLinkBoards: { [did: string]: LinkBoard | undefined };
-  export let displayBanner: boolean = false;
-  export let displayDescription: boolean = false;
   import type { LinkBoard } from "$lib/components/shared/interfaces";
 
-  let loading = true;
-  let userProfiles: any[] = [];
+  let {
+    users,
+    primaryUserDid,
+    userLinkBoards,
+    displayBanner = false,
+    displayDescription = false
+  }: {
+    users: User[];
+    primaryUserDid: string | undefined;
+    userLinkBoards: { [did: string]: LinkBoard | undefined };
+    displayBanner?: boolean;
+    displayDescription?: boolean;
+  } = $props();
 
-  onMount(async () => {
+  let loading = $state(true);
+  let userProfiles = $state<any[]>([]);
+
+  $effect(() => {
     if (users && users.length > 0) {
-      const profiles = await Promise.all(
-        users.map(async (user) => {
-          let enrichedUser = {
-            ...user,
-            hasLinks: !!userLinkBoards?.[user.did]?.cards?.length
-          };
+      loading.set(true);
+      (async () => {
+        const profiles = await Promise.all(
+          users.map(async (user) => {
+            let enrichedUser = {
+              ...user,
+              hasLinks: !!userLinkBoards?.[user.did]?.cards?.length
+            };
 
-          try {
-            const response = await fetch(
-              `https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${user.did}`
-            );
-            if (response.ok) {
-              const profile = await response.json();
-              return {
-                ...enrichedUser,
-                handle: profile.handle || user.handle,
-                displayName: profile.displayName || user.displayName,
-                avatar: profile.avatar,
-                description: displayDescription ? profile.description : undefined,
-                banner: profile.banner
-              };
+            try {
+              const response = await fetch(
+                `https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${user.did}`
+              );
+              if (response.ok) {
+                const profile = await response.json();
+                return {
+                  ...enrichedUser,
+                  handle: profile.handle || user.handle,
+                  displayName: profile.displayName || user.displayName,
+                  avatar: profile.avatar,
+                  description: displayDescription ? profile.description : undefined,
+                  banner: profile.banner
+                };
+              }
+            } catch (error) {
+              console.error(`Error fetching profile for ${user.did}:`, error);
             }
-          } catch (error) {
-            console.error(`Error fetching profile for ${user.did}:`, error);
-          }
 
-          return enrichedUser; // fallback if fetch fails
-        })
-      );
-      userProfiles = profiles.filter(Boolean);
+            return enrichedUser; // fallback if fetch fails
+          })
+        );
+        userProfiles.set(profiles.filter(Boolean));
+        loading.set(false);
+      })();
+    } else {
+      loading.set(false);
     }
-    loading = false;
   });
 
   function navigateToUser(user: any) {
