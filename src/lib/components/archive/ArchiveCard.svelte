@@ -1,8 +1,15 @@
 <script lang="ts">
-  export let type: 'link' | 'user';
-  export let url: string;
-  export let title: string;
-  export let value: string | undefined = undefined;
+  let {
+    type,
+    url,
+    title,
+    value = undefined
+  }: {
+    type: 'link' | 'user';
+    url: string;
+    title: string;
+    value?: string | undefined;
+  } = $props();
 </script>
 
 {#if type === 'link'}
