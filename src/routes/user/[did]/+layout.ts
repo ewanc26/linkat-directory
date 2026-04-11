@@ -1,5 +1,20 @@
 import type { LayoutLoad } from "./$types";
 
+// Resolve identity via Slingshot (matches @ewanc26/atproto pattern)
+async function resolveIdentity(identifier: string, fetch: typeof globalThis.fetch): Promise<{ did: string; handle: string; pds: string }> {
+  const response = await fetch(
+    `https://slingshot.microcosm.blue/xrpc/com.bad-example.identity.resolveMiniDoc?identifier=${encodeURIComponent(identifier)}`
+  );
+  if (!response.ok) {
+    throw new Error(`Failed to resolve identifier via Slingshot: ${response.status}`);
+  }
+  const data = await response.json();
+  if (!data.did || !data.pds) {
+    throw new Error("Invalid response from identity resolver");
+  }
+  return { did: data.did, handle: data.handle || data.did, pds: data.pds };
+}
+
 export const load: LayoutLoad = async ({ params, fetch }) => {
   const { did } = params;
 
@@ -8,7 +23,7 @@ export const load: LayoutLoad = async ({ params, fetch }) => {
     const profileResponse = await fetch(
       `https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${did}`
     );
-    
+
     if (!profileResponse.ok) {
       return {
         did,
@@ -17,46 +32,25 @@ export const load: LayoutLoad = async ({ params, fetch }) => {
         error: "User not found"
       };
     }
-    
+
     const profile = await profileResponse.json();
 
-    // Get user's PDS and fetch Linkat links
-    const split = did.split(":");
-    let pdsurl: string | null = null;
+    // Resolve PDS via Slingshot (matches @ewanc26/atproto pattern)
     let dynamicLinks = undefined;
+    try {
+      const resolved = await resolveIdentity(did, fetch);
+      const linksResponse = await fetch(
+        `${resolved.pds}/xrpc/com.atproto.repo.listRecords?repo=${did}&collection=blue.linkat.board&rkey=self`
+      );
 
-    if (split[0] === "did") {
-      if (split[1] === "plc") {
-        const diddocResponse = await fetch(`https://plc.directory/${did}`);
-        if (diddocResponse.ok) {
-          const diddoc = await diddocResponse.json();
-          for (const service of diddoc["service"] || []) {
-            if (service["id"] === "#atproto_pds") {
-              pdsurl = service["serviceEndpoint"];
-              break;
-            }
-          }
+      if (linksResponse.ok) {
+        const result = await linksResponse.json();
+        if (result.records && result.records.length > 0) {
+          dynamicLinks = result.records[0].value;
         }
-      } else if (split[1] === "web") {
-        pdsurl = `https://${split[2]}`;
       }
-    }
-
-    if (pdsurl) {
-      try {
-        const linksResponse = await fetch(
-          `${pdsurl}/xrpc/com.atproto.repo.listRecords?repo=${did}&collection=blue.linkat.board&rkey=self`
-        );
-        
-        if (linksResponse.ok) {
-          const result = await linksResponse.json();
-          if (result.records && result.records.length > 0) {
-            dynamicLinks = result.records[0].value;
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching dynamic links:", error);
-      }
+    } catch (error) {
+      console.error("Error fetching dynamic links:", error);
     }
 
     return {

@@ -19,6 +19,21 @@ export async function safeFetch(url: string, fetch: typeof globalThis.fetch) {
   }
 }
 
+// Resolve identity via Slingshot (matches @ewanc26/atproto pattern)
+async function resolveIdentity(identifier: string, fetch: typeof globalThis.fetch): Promise<{ did: string; handle: string; pds: string }> {
+  const response = await fetch(
+    `https://slingshot.microcosm.blue/xrpc/com.bad-example.identity.resolveMiniDoc?identifier=${encodeURIComponent(identifier)}`
+  );
+  if (!response.ok) {
+    throw new Error(`Failed to resolve identifier via Slingshot: ${response.status}`);
+  }
+  const data = await response.json();
+  if (!data.did || !data.pds) {
+    throw new Error("Invalid response from identity resolver");
+  }
+  return { did: data.did, handle: data.handle || data.did, pds: data.pds };
+}
+
 export async function getProfile(fetch: typeof globalThis.fetch): Promise<Profile> {
   const cacheKey = `profile_${env.DIRECTORY_OWNER}`;
   let profile: Profile | null = getCache<Profile>(cacheKey);
@@ -28,30 +43,15 @@ export async function getProfile(fetch: typeof globalThis.fetch): Promise<Profil
   }
 
   try {
+    // Fetch profile from public API
     const fetchProfile = await safeFetch(
       `https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${env.DIRECTORY_OWNER}`,
       fetch
     );
-    const split = fetchProfile["did"].split(":");
-    let diddoc;
-    if (split[0] === "did") {
-      if (split[1] === "plc") {
-        diddoc = await safeFetch(`https://plc.directory/${fetchProfile["did"]}`, fetch);
-      } else if (split[1] === "web") {
-        diddoc = await safeFetch("https://" + split[2] + "/.well-known/did.json", fetch);
-      }
-    } else {
-      throw new Error("Invalid DID, malformed");
-    }
-    let pdsurl;
-    for (const service of diddoc["service"]) {
-      if (service["id"] === "#atproto_pds") {
-        pdsurl = service["serviceEndpoint"];
-      }
-    }
-    if (!pdsurl) {
-      throw new Error("DID lacks #atproto_pds service");
-    }
+
+    // Resolve PDS via Slingshot (matches @ewanc26/atproto pattern)
+    const resolved = await resolveIdentity(fetchProfile["did"], fetch);
+
     profile = {
       avatar: fetchProfile["avatar"],
       banner: fetchProfile["banner"],
@@ -59,14 +59,14 @@ export async function getProfile(fetch: typeof globalThis.fetch): Promise<Profil
       did: fetchProfile["did"],
       handle: fetchProfile["handle"],
       description: fetchProfile["description"],
-      pds: pdsurl,
+      pds: resolved.pds,
     };
     setCache(cacheKey, profile);
     return profile;
   } catch (error: unknown) {
     console.error("Error fetching profile:", error);
     if (error instanceof Error) {
-      throw error; // Re-throw the error after logging
+      throw error;
     } else {
       throw new Error("An unknown error occurred while fetching profile");
     }
