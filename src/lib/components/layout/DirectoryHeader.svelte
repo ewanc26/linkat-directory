@@ -1,14 +1,18 @@
 <script lang="ts">
+  // ── Header ────────────────────────────────────────────────────────────
+  // Top bar showing the directory title, computed from the owner's profile.
+  // On user detail pages, a "Home" link replaces the empty space.
+
   import { env } from "$env/dynamic/public";
   import { page } from "$app/stores";
   import { getProfile } from "$components/profile/profile";
-  
+
   let isUserPage = $derived($page.route.id === '/user/[did]');
-  
+
   let profile = $state<{ displayName?: string; handle?: string } | null>(null);
   let loading = $state(true);
   let error = $state<string | null>(null);
-  
+
   $effect(() => {
     if (env.DIRECTORY_OWNER) {
       loading = true;
@@ -37,19 +41,19 @@
       <h1 class="text-lg font-semibold text-[var(--text-color)]">
         {env.DIRECTORY_OWNER ? (
           loading ? 'Loading...' : (
-            profile ? 
-              `${profile.displayName || profile.handle || env.DIRECTORY_OWNER}'s Linkat Directory` : 
+            profile ?
+              `${profile.displayName || profile.handle || env.DIRECTORY_OWNER}'s Linkat Directory` :
               `${env.DIRECTORY_OWNER}'s Linkat Directory`
           )
         ) : 'Linkat Directory'}
       </h1>
-      
+
       {#if isUserPage}
-        <a 
-          href="/" 
+        <a
+          href="/"
           class="text-sm text-link hover:text-link-hover transition-colors"
         >
-          ← Home
+          &larr; Home
         </a>
       {/if}
     </div>

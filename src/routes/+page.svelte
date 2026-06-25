@@ -1,4 +1,8 @@
 <script lang="ts">
+  // ── Home Page ─────────────────────────────────────────────────────────
+  // Shows the user directory grid or, if no users are configured, a setup guide.
+  // Metadata is generated dynamically from the owner's profile display name.
+
   import { getStores } from "$app/stores";
   import { env } from "$env/dynamic/public";
   import UserDirectory from "$lib/components/archive/UserDirectory.svelte";
@@ -8,15 +12,13 @@
   const { page } = getStores();
   let { data } = $props();
 
-  // Environment variable for directory owner
   let directoryOwner = env.DIRECTORY_OWNER ?? "";
 
-  // Profile state for directory owner - initialize with data.profile if available
+  // Prime owner profile from layout data; fetch separately if unavailable
   let ownerProfile = $state<{ displayName?: string; handle?: string } | null>(
     data.profile || null
   );
 
-  // Load the directory owner's profile only if we don't already have it
   $effect(() => {
     if (directoryOwner && !ownerProfile) {
       const loadOwner = async () => {
@@ -32,14 +34,12 @@
     }
   });
 
-  // Derived reactive values for user display options
   let displayUserBanner = $derived(data.displayUserBanner);
   let displayUserDescription = $derived(data.displayUserDescription);
 
   /**
-   * Shuffles an array in place using the Fisher-Yates (Knuth) algorithm.
-   * @param array The array to shuffle.
-   * @returns The shuffled array.
+   * Fisher-Yates (Knuth) shuffle — unbiased, in-place, O(n).
+   * Used to randomise user card order so the same person isn't always first.
    */
   function shuffleArray<T>(array: T[]): T[] {
     let currentIndex = array.length, randomIndex;
@@ -59,22 +59,21 @@
   const getDisplayName = (p: { displayName?: string; handle?: string } | null | undefined) =>
     p?.displayName || p?.handle || null;
 
-  // Computed title that prioritizes display name, then handle, then DID
+  // ── Reactive page metadata ──────────────────────────────────────────
   const pageTitle = $derived(() => {
     if (!directoryOwner) return "Linkat Directory";
-    
+
     const displayName = getDisplayName(ownerProfile);
     if (displayName) {
       return `${displayName}'s Linkat Directory`;
     }
-    
-    // Fallback to directoryOwner (DID) while loading
+
     return `${directoryOwner}'s Linkat Directory`;
   });
 
   const pageDescription = $derived(() => {
     if (!directoryOwner) return "Discover amazing users curated by the Linkat community";
-    
+
     const displayName = getDisplayName(ownerProfile) || directoryOwner;
     return `Discover users' links curated by ${displayName} in ${displayName}'s Linkat Directory`;
   });
@@ -82,7 +81,7 @@
   const pageKeywords = $derived(() => {
     const baseKeywords = "Linkat, directory, links, Bluesky, community, curation";
     if (!directoryOwner) return baseKeywords;
-    
+
     const displayName = getDisplayName(ownerProfile) || directoryOwner;
     return `${baseKeywords}, ${displayName}`;
   });
@@ -99,7 +98,8 @@
 />
 
 <div class="container mx-auto px-4 py-8">
-{#if data.noUsersConfigured}
+  {#if data.noUsersConfigured}
+    <!-- ── Onboarding state ──────────────────────────────────────────── -->
     <div class="text-center py-12">
       <div class="max-w-4xl mx-auto px-4">
         <p class="text-lg mb-4 opacity-75">
@@ -118,6 +118,7 @@
       </div>
     </div>
   {:else}
+    <!-- ── User directory grid ───────────────────────────────────────── -->
     <UserDirectory
       users={shuffleArray([...data.linkatUsers]).map(did => ({ did }))}
       primaryUserDid={directoryOwner}

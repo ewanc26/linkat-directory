@@ -1,4 +1,7 @@
 <script lang="ts">
+  // ── Navigation ────────────────────────────────────────────────────────
+  // Minimal nav bar: shows a home icon link on sub-pages.
+
   import { getStores } from "$app/stores";
   const { page } = getStores();
   import { HomeIcon } from "$components/icons";

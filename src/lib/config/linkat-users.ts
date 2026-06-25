@@ -1,36 +1,37 @@
+// ── Linkat User Configuration ─────────────────────────────────────────
+// Parses DIRECTORY_OWNER and PUBLIC_LINKAT_USERS env vars into a user list.
+
 import { env } from "$env/dynamic/public";
 
 /**
- * Configuration for Linkat users to display
- * 
- * Users can be configured via environment variables:
- * - PUBLIC_LINKAT_USERS: Comma-separated list of DIDs (e.g., "did:plc:abc123,did:web:example.com")
- * - DIRECTORY_OWNER: Primary user DID (fallback if no users configured)
- * 
- * Format: "did:plc:xxxxxxxxxxxxxxxxxxxxxxxx" or "did:web:xxxxxxxxxxxxxxxxxxxxxxxx"
- * The first user will be treated as the primary user
+ * Configures which users appear in the directory.
+ *
+ * Env sources:
+ * - DIRECTORY_OWNER (always first, treated as primary)
+ * - PUBLIC_LINKAT_USERS (comma-separated DIDs, deduplicated)
+ *
+ * DID format: did:plc:... or did:web:...
  */
 
 function parseUsersFromEnv(): string[] {
   const users: string[] = [];
-  
-  // Always include DIRECTORY_OWNER as the primary user if configured
+
+  // DIRECTORY_OWNER is always the primary user when set
   if (env.DIRECTORY_OWNER) {
     users.push(env.DIRECTORY_OWNER);
   }
-  
-  // Add additional users from PUBLIC_LINKAT_USERS, avoiding duplicates
+
+  // Append additional users, filtering out the owner to avoid duplicates
   if (env.PUBLIC_LINKAT_USERS) {
     const envUsers = env.PUBLIC_LINKAT_USERS.split(',')
       .map(did => did.trim())
       .filter(did => did.startsWith('did:') && did !== env.DIRECTORY_OWNER);
     users.push(...envUsers);
   }
-  
+
   return users;
 }
 
 export const LINKAT_USERS = parseUsersFromEnv();
 
-// Maximum number of users to display (1-10)
 export const MAX_USERS = 10;

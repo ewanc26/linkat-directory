@@ -1,3 +1,8 @@
+// ── Tailwind Configuration ─────────────────────────────────────────────
+// Maps CSS custom properties to Tailwind colour tokens so the
+// monochromatic theme system works seamlessly with utility classes.
+// Prose typography is themed via @tailwindcss/typography.
+
 import forms from "@tailwindcss/forms";
 import typography from "@tailwindcss/typography";
 
@@ -8,6 +13,7 @@ export default {
 
   theme: {
     extend: {
+      // Colour tokens mirror the CSS custom properties from variables.css
       colors: {
         primary: "var(--link-color)",
         "primary-hover": "var(--link-hover-color)",
@@ -18,6 +24,8 @@ export default {
         button: "var(--button-bg)",
         "button-hover": "var(--button-hover-bg)",
       },
+
+      // Prose typography uses CSS variables so it adapts to theme
       typography: {
         DEFAULT: {
           css: {
@@ -28,27 +36,13 @@ export default {
                 color: "var(--link-hover-color)",
               },
             },
-            h1: {
-              color: "var(--text-color)",
-            },
-            h2: {
-              color: "var(--text-color)",
-            },
-            h3: {
-              color: "var(--text-color)",
-            },
-            h4: {
-              color: "var(--text-color)",
-            },
-            h5: {
-              color: "var(--text-color)",
-            },
-            h6: {
-              color: "var(--text-color)",
-            },
-            strong: {
-              color: "var(--text-color)",
-            },
+            h1: { color: "var(--text-color)" },
+            h2: { color: "var(--text-color)" },
+            h3: { color: "var(--text-color)" },
+            h4: { color: "var(--text-color)" },
+            h5: { color: "var(--text-color)" },
+            h6: { color: "var(--text-color)" },
+            strong: { color: "var(--text-color)" },
             code: {
               color: "var(--text-color)",
               backgroundColor: "var(--background-color)",

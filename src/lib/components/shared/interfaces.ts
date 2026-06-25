@@ -1,15 +1,18 @@
-// Define the type for the fetched links data
+// ── Shared Types ───────────────────────────────────────────────────────
+// Type definitions used across the Linkat Directory frontend.
+
 /**
  * Represents a single link card with a URL, text, and an emoji.
  */
 export interface LinkCard {
-  url: string; // The URL of the link.
-  text: string; // The display text for the link.
-  emoji: string; // An emoji associated with the link.
+  url: string;
+  text: string;
+  emoji: string;
 }
 
 /**
- * Represents the properties for the DynamicHead component.
+ * Properties for the DynamicHead component — covers Open Graph, Twitter Card,
+ * and standard meta tags. Most fields have sensible fallbacks.
  */
 export interface DynamicHeadProps {
   title: string;
@@ -29,43 +32,45 @@ export interface DynamicHeadProps {
 }
 
 /**
- * Represents a board containing multiple link cards.
+ * A Linkat board record from the AT Protocol (blue.linkat.board collection).
+ * Each board contains zero or more link cards.
  */
 export interface LinkBoard {
-  $type: "blue.linkat.board"; // A type identifier for the link board.
-  cards: LinkCard[]; // An array of LinkCard objects.
+  $type: "blue.linkat.board";
+  cards: LinkCard[];
 }
 
 /**
- * Represents a theme with a unique identifier and a name.
+ * A theme identifier and display name (for future theme-switching support).
  */
 export interface Theme {
-  id: string; // The unique identifier for the theme.
-  name: string; // The name of the theme.
+  id: string;
+  name: string;
 }
 
 /**
- * Represents public environment variables.
+ * Public environment variables exposed to the client.
  */
 export interface PublicEnv {
-  DIRECTORY_OWNER: string; // Public user for ATProtocol.
+  DIRECTORY_OWNER: string;
 }
 
 /**
- * Represents a user profile with various details.
+ * A Bluesky/AT Protocol user profile, as consumed by the directory.
+ * PDS is resolved via Slingshot rather than hardcoded.
  */
 export interface Profile {
-  avatar: string; // URL to the user's avatar image.
-  banner: string; // URL to the user's banner image.
-  displayName: string; // The display name of the user.
-  did: string; // Decentralised Identifier of the user.
-  handle: string; // The user's handle.
-  description: string; // A description of the user.
-  pds: string; // Personal Data Server URL.
+  avatar: string;
+  banner: string;
+  displayName: string;
+  did: string; // Decentralised Identifier
+  handle: string;
+  description: string;
+  pds: string; // Personal Data Server URL, resolved at runtime
 }
 
 /**
- * Represents a user with basic details.
+ * Minimal user representation for directory card rendering.
  */
 export interface User {
   did: string;

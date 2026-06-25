@@ -1,13 +1,20 @@
+// ── Root Layout Load ───────────────────────────────────────────────────
+// Fetches profiles and link boards for all configured users at the root
+// level so child routes have them without refetching.
+
 import { getProfile, safeFetch } from "$components/profile/profile";
 import type { Profile, LinkBoard } from "$components/shared";
 import { LINKAT_USERS } from "$lib/config/linkat-users";
 import { env } from "$env/dynamic/public";
 
-// Profile data cache
+// Module-level cache so route transitions don't re-fetch the same data
 let profile: Profile | undefined;
 let dynamicLinks: LinkBoard | undefined;
 
-// Resolve identity via Slingshot (matches @ewanc26/atproto pattern)
+/**
+ * Resolve a DID to its PDS endpoint via Slingshot.
+ * Slingshot returns { did, handle, pds } from a lightweight identity document.
+ */
 async function resolveIdentity(identifier: string, fetch: typeof globalThis.fetch): Promise<{ did: string; handle: string; pds: string }> {
   const response = await fetch(
     `https://slingshot.microcosm.blue/xrpc/com.bad-example.identity.resolveMiniDoc?identifier=${encodeURIComponent(identifier)}`
@@ -25,7 +32,6 @@ async function resolveIdentity(identifier: string, fetch: typeof globalThis.fetc
 export async function load({ fetch }) {
   const userDids = LINKAT_USERS;
 
-  // If no users configured, return empty state
   if (userDids.length === 0) {
     return {
       profile: null,
@@ -39,16 +45,18 @@ export async function load({ fetch }) {
     };
   }
 
-  // Use the first user as primary if not already cached
+  // ── Primary user profile ────────────────────────────────────────────
   const primaryUserDid = userDids[0];
   if (!profile || profile.did !== primaryUserDid) {
     try {
+      // Temporarily override so getProfile reads the right env var
       const originalEnv = env.DIRECTORY_OWNER;
       env.DIRECTORY_OWNER = primaryUserDid;
       profile = await getProfile(fetch);
       if (originalEnv) env.DIRECTORY_OWNER = originalEnv;
     } catch (error) {
       console.error("Error fetching primary user profile:", error);
+      // Fallback profile so the UI renders something even when Bluesky is down
       profile = {
         avatar: "",
         banner: "",
@@ -61,12 +69,12 @@ export async function load({ fetch }) {
     }
   }
 
+  // ── Link boards for all users ───────────────────────────────────────
   const userLinkBoards: { [did: string]: LinkBoard | undefined } = {};
 
-  // Fetch dynamic links for all configured users
   for (const userDid of userDids) {
     try {
-      // Resolve PDS via Slingshot (matches @ewanc26/atproto pattern)
+      // Each user may be on a different PDS — resolve per-user
       const resolved = await resolveIdentity(userDid, fetch);
 
       const rawResponse = await fetch(
@@ -81,7 +89,7 @@ export async function load({ fetch }) {
     }
   }
 
-  // For backward compatibility, keep the single dynamicLinks
+  // Legacy single-user fallback
   dynamicLinks = profile ? userLinkBoards[profile.did] : undefined;
 
   return {
@@ -91,6 +99,7 @@ export async function load({ fetch }) {
     posts: new Map(),
     dynamicLinks,
     userLinkBoards,
+    // Optionally hide the owner's own card so they don't see themselves listed
     linkatUsers: userDids.filter(did => {
        const hideOwnerCard = env.HIDE_OWNER_CARD === 'true';
       if (hideOwnerCard && did === primaryUserDid) {

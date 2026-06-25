@@ -1,4 +1,5 @@
 <script>
+  // Feather edit/pencil icon
   export let size = "20";
   export let fill = "none";
   export let stroke = "currentColor";

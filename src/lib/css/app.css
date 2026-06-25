@@ -1,13 +1,16 @@
+/* ── Linkat Directory: Core Styles ──────────────────────────────────── */
+/* Imports design tokens, loads Tailwind, then adds base-layer overrides
+   for scrollbars, headings, links, and prose content. */
+
 @import "$css/variables.css";
 
-/* Linkat Directory - Core CSS Styles */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
 
-  /* Custom scrollbar styling for webkit browsers */
+  /* ── Scrollbar ──────────────────────────────────────────────────── */
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -26,6 +29,7 @@
     background: var(--button-hover-bg);
   }
 
+  /* ── Body & Reset ───────────────────────────────────────────────── */
   * {
     color: var(--text-color);
   }
@@ -36,6 +40,7 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
 
+  /* ── Headings ───────────────────────────────────────────────────── */
   h1 {
     @apply text-4xl font-bold;
   }
@@ -60,9 +65,9 @@
     @apply text-sm font-semibold;
   }
 
+  /* ── Links ──────────────────────────────────────────────────────── */
   a {
     @apply text-[var(--link-color)] hover:text-[var(--link-hover-color)] no-underline;
-    /* Simplified hover transitions */
     transition: color 0.2s ease;
   }
 
@@ -78,11 +83,10 @@
     text-decoration: none !important;
   }
 
-  /* Header links - simplified transitions */
+  /* Header links and font-medium links scale on hover rather than colour-shift */
   header a,
   a.font-medium {
     @apply no-underline hover:no-underline inline-block;
-    /* Only animate on hover, not constantly */
     transition: transform 0.2s ease;
   }
 
@@ -91,12 +95,11 @@
     transform: scale(1.1);
   }
 
-  /* Typography styles for blog/prose content using Tailwind Typography plugin */
+  /* ── Prose (Tailwind Typography plugin) ──────────────────────────── */
   .prose {
     @apply max-w-none;
   }
 
-  /* Left-align headings in blog posts */
   .prose h1,
   .prose h2,
   .prose h3,
@@ -106,7 +109,6 @@
     @apply text-left;
   }
 
-  /* Left-align paragraphs and lists */
   .prose p,
   .prose ul,
   .prose ol {
@@ -117,17 +119,6 @@
     @apply border-0 rounded-lg mx-auto;
   }
 
-  a {
-    color: var(--link-color);
-    text-decoration: none;
-  }
-
-  a:hover {
-    color: var(--link-hover-color);
-    text-decoration: none;
-  }
-
-  /* Prose element styling with CSS variables for theme consistency */
   .prose a {
     color: var(--link-color);
     text-decoration: none;
@@ -160,6 +151,7 @@
   }
 }
 
+/* ── Utility Classes ─────────────────────────────────────────────────── */
 .text-link {
   color: var(--link-color);
 }

@@ -1,4 +1,5 @@
 <script>
+  // Feather home icon — navigates back to the directory root
   export let size = "24";
   export let stroke = "currentColor";
   export let fill = "none";

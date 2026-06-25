@@ -1,4 +1,8 @@
 <script lang="ts">
+  // ── User Detail Page ──────────────────────────────────────────────────
+  // Displays a single user's Bluesky profile header and their curated links
+  // from the blue.linkat.board AT Protocol record collection.
+
   import DynamicLinks from "$lib/components/layout/main/DynamicLinks.svelte";
   import DynamicHead from "$lib/components/layout/DynamicHead.svelte";
   import { getStores } from "$app/stores";
@@ -13,6 +17,7 @@
   let error = $derived(data.error);
   let did = $derived(data.did);
 
+  // Load the directory owner's profile for the page title/header context
   let directoryOwner = env.DIRECTORY_OWNER;
   let ownerProfile = $state<{ displayName?: string; handle?: string } | null>(null);
 
@@ -71,23 +76,25 @@
 
 <div class="container mx-auto px-4 py-8">
   {#if error}
+    <!-- ── Error state ────────────────────────────────────────────── -->
     <div class="text-center py-8">
       <h1 class="text-2xl font-bold mb-4">Error</h1>
       <p class="text-[var(--error-color)]">{error}</p>
     </div>
   {:else if !profile}
+    <!-- ── Not found ──────────────────────────────────────────────── -->
     <div class="text-center py-8">
       <h1 class="text-2xl font-bold mb-4">User Not Found</h1>
       <p class="text-[var(--placeholder-color)]">The user with DID {did} was not found.</p>
     </div>
   {:else}
+    <!-- ── Profile header ─────────────────────────────────────────── -->
     <div class="max-w-4xl mx-auto">
-      <!-- Profile Header -->
       <div class="bg-[var(--card-bg)] rounded-lg shadow-md p-6 mb-6">
         <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-4">
           {#if profile.avatar}
-            <img 
-              src={profile.avatar} 
+            <img
+              src={profile.avatar}
               alt={profile.displayName || profile.handle}
               class="w-20 h-20 rounded-full object-cover"
             />
@@ -98,7 +105,7 @@
               </span>
             </div>
           {/if}
-          
+
           <div class="text-center sm:text-left">
             <h1 class="text-2xl font-bold">{profile.displayName || profile.handle}</h1>
             <p class="text-[var(--secondary-text-color)]">@{profile.handle}</p>
@@ -110,7 +117,7 @@
         </div>
       </div>
 
-      <!-- Links Section -->
+      <!-- ── Link board ──────────────────────────────────────────── -->
       <div class="bg-[var(--card-bg)] rounded-lg shadow-md p-6">
         <h2 class="text-xl font-bold mb-4">Links</h2>
         <DynamicLinks data={dynamicLinks} />

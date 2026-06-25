@@ -1,4 +1,5 @@
 <script>
+  // Feather link icon — used as a "copy link" affordance
   export let size = "18";
   export let stroke = "currentColor";
   export let fill = "none";

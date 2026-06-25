@@ -1,11 +1,15 @@
 <script lang="ts">
+  // ── Dynamic Head ──────────────────────────────────────────────────────
+  // Sets <title>, meta description/keywords, Open Graph, and Twitter Card
+  // tags. Falls back titles/descriptions across the OG and Twitter families
+  // when a specific variant isn't provided.
+
   import { getStores } from '$app/stores';
   const { page } = getStores();
 
   import type { DynamicHeadProps } from '$lib/components/shared/interfaces';
 
-  // Define props for dynamic head content
-  let { 
+  let {
     title,
     description,
     keywords,
@@ -22,7 +26,7 @@
     twitterImage
   }: DynamicHeadProps = $props();
 
-  // Fallback for Open Graph and Twitter titles/descriptions if not provided
+  // Fallback chain: OG/Twitter-specific values -> generic title/description
   ogTitle = ogTitle || title;
   ogDescription = ogDescription || description;
   twitterTitle = twitterTitle || title;
@@ -38,7 +42,7 @@
     <meta name="keywords" content={keywords} />
   {/if}
 
-  <!-- Open Graph / Facebook -->
+  <!-- ── Open Graph / Facebook ────────────────────────────────────── -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content={ogUrl} />
   <meta property="og:title" content={ogTitle} />
@@ -50,7 +54,7 @@
     <meta property="og:image:height" content={ogImageHeight} />
   {/if}
 
-  <!-- Twitter -->
+  <!-- ── Twitter Card ─────────────────────────────────────────────── -->
   <meta name="twitter:card" content={twitterCard} />
   <meta name="twitter:url" content={twitterUrl} />
   <meta name="twitter:title" content={twitterTitle} />

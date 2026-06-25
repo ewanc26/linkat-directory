@@ -1,4 +1,5 @@
 <script lang="ts">
+  // Feather moon icon — dark mode toggle indicator
   export let stroke: string = "currentColor";
   export let width: string = "20";
   export let height: string = "20";

@@ -1,3 +1,4 @@
+# Nix dev shell: Node 22 + pnpm for linkat-directory development
 {
   description = "linkat-directory — AT Protocol link directory";
 

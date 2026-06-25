@@ -1,6 +1,12 @@
+// ── User Page Layout Load ──────────────────────────────────────────────
+// Fetches a single user's Bluesky profile and their Linkat board records.
+
 import type { LayoutLoad } from "./$types";
 
-// Resolve identity via Slingshot (matches @ewanc26/atproto pattern)
+/**
+ * Resolve a DID to its PDS endpoint via the Slingshot identity service.
+ * Required so we know which PDS to query for AT Protocol records.
+ */
 async function resolveIdentity(identifier: string, fetch: typeof globalThis.fetch): Promise<{ did: string; handle: string; pds: string }> {
   const response = await fetch(
     `https://slingshot.microcosm.blue/xrpc/com.bad-example.identity.resolveMiniDoc?identifier=${encodeURIComponent(identifier)}`
@@ -19,7 +25,7 @@ export const load: LayoutLoad = async ({ params, fetch }) => {
   const { did } = params;
 
   try {
-    // Fetch user profile
+    // Step 1: fetch the user's Bluesky profile from the public API
     const profileResponse = await fetch(
       `https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${did}`
     );
@@ -35,7 +41,7 @@ export const load: LayoutLoad = async ({ params, fetch }) => {
 
     const profile = await profileResponse.json();
 
-    // Resolve PDS via Slingshot (matches @ewanc26/atproto pattern)
+    // Step 2: resolve the user's PDS and fetch their link board records
     let dynamicLinks = undefined;
     try {
       const resolved = await resolveIdentity(did, fetch);

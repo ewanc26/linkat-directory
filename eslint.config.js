@@ -1,3 +1,4 @@
+// ESLint flat config: JS recommended, TypeScript strict, Svelte rules
 import js from '@eslint/js';
 import svelte from 'eslint-plugin-svelte';
 import globals from 'globals';

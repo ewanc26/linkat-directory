@@ -1,4 +1,8 @@
 <script lang="ts">
+  // ── Archive Card ──────────────────────────────────────────────────────
+  // Renders a single card in the directory grid. Two modes: 'link' shows an
+  // emoji + title + URL; 'user' shows title + URL. Both open externally.
+
   let {
     type,
     url,
@@ -13,7 +17,7 @@
 </script>
 
 {#if type === 'link'}
-  <a 
+  <a
     href={url}
     target="_blank"
     rel="noopener noreferrer"
@@ -27,7 +31,7 @@
     <p class="text-sm text-link opacity-75 truncate">{url}</p>
   </a>
 {:else if type === 'user'}
-  <a 
+  <a
     href={url}
     class="block p-4 rounded-lg border hover:shadow-lg transition-shadow"
     style="background: var(--card-bg); border-color: var(--border-color);"

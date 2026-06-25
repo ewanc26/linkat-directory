@@ -1,3 +1,4 @@
+// Barrel: SVG icon components for the directory UI
 export { default as CopyLinkIcon } from './utility/CopyLinkIcon.svelte';
 export { default as HomeIcon } from './utility/HomeIcon.svelte';
 export { default as MoonIcon } from './utility/MoonIcon.svelte';

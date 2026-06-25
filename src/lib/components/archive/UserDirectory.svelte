@@ -1,4 +1,10 @@
 <script lang="ts">
+  // ── User Directory ────────────────────────────────────────────────────
+  // Main user grid on the home page. Fetches Bluesky profiles for each
+  // configured DID, then renders clickable cards. Cards with link boards
+  // navigate to the internal user page; cards without link boards open the
+  // user's Bluesky profile in a new tab.
+
   import { goto } from "$app/navigation";
   import type { User } from "$lib/components/shared/interfaces";
   import type { LinkBoard } from "$lib/components/shared/interfaces";
@@ -20,6 +26,8 @@
   let loading = $state(true);
   let userProfiles = $state<any[]>([]);
 
+  // Fetch Bluesky profile metadata for each user, enriching the base User
+  // object with avatar, displayName, handle, description, and banner.
   $effect(() => {
     if (users && users.length > 0) {
       loading.set(true);
@@ -50,7 +58,7 @@
               console.error(`Error fetching profile for ${user.did}:`, error);
             }
 
-            return enrichedUser; // fallback if fetch fails
+            return enrichedUser; // fallback if any individual fetch fails
           })
         );
         userProfiles.set(profiles.filter(Boolean));
@@ -66,9 +74,8 @@
     if (userBoard && userBoard.cards?.length > 0) {
       goto(`/user/${encodeURIComponent(user.did)}`);
     } else {
-      // Construct Bluesky profile URL
-      const blueskyHandle = user.did;
-      window.open(`https://bsky.app/profile/${blueskyHandle}`, '_blank');
+      // No link board — send them to the Bluesky profile directly
+      window.open(`https://bsky.app/profile/${user.did}`, '_blank');
     }
   }
 </script>
@@ -82,7 +89,7 @@
   {:else if userProfiles.length === 0}
     <div class="text-center py-8">
       <p class="text-lg opacity-75">
-        No users configured or found. Please check your configuration and ensure users have associated Linkat data. 
+        No users configured or found. Please check your configuration and ensure users have associated Linkat data.
         {#if primaryUserDid}
           <br />Directory owner is set to: {primaryUserDid}
         {:else}
@@ -93,22 +100,22 @@
   {:else}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {#each userProfiles as user (user.did)}
-        <button 
+        <button
           class="user-card cursor-pointer rounded-lg p-6 transition-transform hover:scale-105 text-left w-full"
           style="background: var(--card-bg); border: 1px solid var(--border-color);"
           on:click={() => navigateToUser(user)}
         >
           {#if displayBanner}
-            <div 
+            <div
               class="w-full h-32 rounded-t-lg mb-4 bg-cover bg-center"
               style="background-image: url({user.banner});"
             ></div>
           {/if}
-          
+
           <div class="flex items-start gap-4">
             {#if user.avatar}
-              <img 
-                src={user.avatar} 
+              <img
+                src={user.avatar}
                 alt={user.displayName || user.handle}
                 class="w-16 h-16 rounded-full object-cover"
               />
@@ -119,7 +126,7 @@
                 </span>
               </div>
             {/if}
-            
+
             <div class="flex-1 min-w-0">
               <h3 class="font-bold text-lg truncate">
                 {user.displayName || user.handle || 'Unknown User'}
@@ -132,15 +139,15 @@
               {/if}
             </div>
           </div>
-          
+
           <div class="mt-4 text-center">
             {#if user.hasLinks}
               <span class="text-sm text-link hover:text-link-hover">
-                View links →
+                View links &rarr;
               </span>
             {:else}
               <span class="text-sm text-link hover:text-link-hover">
-                No links - View Bluesky profile →
+                No links - View Bluesky profile &rarr;
               </span>
             {/if}
           </div>

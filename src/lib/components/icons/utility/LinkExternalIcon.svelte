@@ -1,4 +1,5 @@
 <script>
+  // Feather external-link icon — opens links in a new tab
   export let size = "14";
   export let fill = "none";
   export let stroke = "currentColor";
