@@ -1,21 +1,27 @@
 # AGENTS.md
 
-Guidance for agents working on Linkat Directory, a SvelteKit directory for AT Protocol Linkat boards.
+Guidance for Linkat Directory, an unmaintained SvelteKit 2/Svelte 5 frontend that prerenders a configured set of Bluesky profiles and their `blue.linkat.board` records for Vercel.
 
-## Boundaries
+## Map and data flow
 
-- `src/routes/` owns directory pages and server endpoints.
-- `src/lib/` owns handle/DID resolution, PDS record fetching, transformation, and reusable UI.
-- `static/` contains public assets; `.github/` contains automation.
+- `src/routes/+layout.ts` reads the configured DIDs, resolves each through Slingshot, and reads board records directly from that user's PDS. It also supplies the primary profile and display flags to the home page.
+- `src/routes/+page.svelte` renders the shuffled directory; `src/routes/user/[did]/` fetches a selected profile and board. These loads can run during prerender and again in the browser, so keep both environments working.
+- `src/lib/components/profile/profile.ts` fetches the primary Bluesky profile and resolves its PDS. `src/lib/utils/cache.ts` is a browser-only, one-hour `localStorage` cache; it does nothing during SSR.
+- `src/lib/components/archive/` owns profile cards, while `src/lib/components/layout/main/` renders Linkat cards. Shared record shapes are in `src/lib/components/shared/interfaces.ts`.
+- `svelte.config.js` uses the Vercel adapter, prerenders `*`, and deliberately sets `publicPrefix: ''`. Consequently every environment value used by the app is public; never put a secret in `.env`.
 
-## Invariants
+## Behavioural constraints
 
-- Treat handles as mutable labels and DIDs as stable identities. Validate DID documents, PDS endpoints, NSIDs, cursors, and record content.
-- External board data is untrusted: sanitize URLs/text, bound pagination and payloads, and handle partial failures visibly.
-- Keep secrets and privileged fetch behavior server-side.
-- Preserve stable directory URLs and useful cache semantics without serving stale identity mappings indefinitely.
-- Match existing accessibility and responsive patterns.
+- `DIRECTORY_OWNER` is first in the directory and `PUBLIC_LINKAT_USERS` adds comma-separated `did:*` values. `HIDE_OWNER_CARD` only hides the owner's card; it does not stop the owner's profile or board fetches. The list currently declares `MAX_USERS` but does not enforce it.
+- Treat Bluesky profiles, resolver responses, PDS URLs, and board records as untrusted remote input. Preserve URL encoding for identifiers, require successful responses before consuming JSON, validate board/card shapes and link schemes before rendering, and make individual-user failures non-fatal.
+- DIDs are the route and repository identity. Handles and display names are mutable presentation data. A user's PDS must be resolved per DID rather than assuming `bsky.social`.
+- Board retrieval currently calls `com.atproto.repo.listRecords` with `rkey=self`; do not mistake that query for a validated single-record lookup or silently broaden it without handling pagination and record selection.
+- External card links open in a new tab with `noopener noreferrer`. Preserve keyboard-accessible buttons/links, visible error and empty states, responsive layouts, and safe rendering of remote text and image URLs.
+- The module-level layout cache and browser cache can retain old profile/identity data. Changes to caching must account for DID changes, expiry, prerender isolation, and partial upstream outages.
 
-## Validation
+## Working and validation
 
-Run `npm run check`, `npm run lint`, and `npm run build`, then preview the production app. Exercise handle and DID lookup, missing/malformed board records, duplicate links, unsafe URLs, pagination, PDS timeout, empty state, direct routes, keyboard navigation, and mobile layout. Use npm and do not commit `.env` or build output.
+- The README's supported workflow is npm (`npm install`, `npm run dev`), and `package-lock.json` is present. A `pnpm-lock.yaml` is also tracked; do not regenerate or reconcile either lockfile during unrelated work, and update only the lockfile for the package manager intentionally used.
+- Run `npm run check`, `npm run lint`, and `npm run build`; use `npm run preview` to inspect the prerendered result. There is no automated test suite.
+- Manually cover no configuration, owner-only and multi-user configurations, hidden-owner/display flags, direct `/user/<did>` navigation, malformed or missing profiles/boards, resolver and PDS failures, unsafe/empty card URLs, keyboard navigation, and narrow screens.
+- Never commit `.env`, `.svelte-kit/`, `build/`, deployment output, or fetched user data. Keep the repository's AGPL licensing and its explicitly unmaintained status intact unless the project owner changes them.
