@@ -1,0 +1,10 @@
+# ── PNPM workspace config ────────────────────────────────────────
+# pnpm 11 refuses to complete `pnpm install` (and therefore `pnpm check`
+# / `pnpm build`, which re-verify the dependency state) until every
+# postinstall script is explicitly allowed or denied.
+#
+# esbuild downloads/links its native binary in postinstall and Vite
+# needs it.
+
+allowBuilds:
+  esbuild: true
