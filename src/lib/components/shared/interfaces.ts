@@ -18,16 +18,18 @@ export interface DynamicHeadProps {
   title: string;
   description: string;
   keywords: string;
+  // The OG/Twitter title and description fall back to `title`/`description`
+  // when omitted, so they are optional despite always being rendered.
   ogUrl?: string;
-  ogTitle: string;
-  ogDescription: string;
+  ogTitle?: string;
+  ogDescription?: string;
   ogImage?: string;
   ogImageWidth?: string;
   ogImageHeight?: string;
   twitterCard?: string;
   twitterUrl?: string;
-  twitterTitle: string;
-  twitterDescription: string;
+  twitterTitle?: string;
+  twitterDescription?: string;
   twitterImage?: string;
 }
 

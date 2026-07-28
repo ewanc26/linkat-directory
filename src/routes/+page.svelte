@@ -3,31 +3,34 @@
   // Shows the user directory grid or, if no users are configured, a setup guide.
   // Metadata is generated dynamically from the owner's profile display name.
 
-  import { getStores } from "$app/stores";
   import { env } from "$env/dynamic/public";
   import UserDirectory from "$lib/components/archive/UserDirectory.svelte";
   import DynamicHead from "$lib/components/layout/DynamicHead.svelte";
   import { getProfile } from "$lib/components/profile/profile";
 
-  const { page } = getStores();
   let { data } = $props();
 
   let directoryOwner = env.DIRECTORY_OWNER ?? "";
 
-  // Prime owner profile from layout data; fetch separately if unavailable
-  let ownerProfile = $state<{ displayName?: string; handle?: string } | null>(
-    data.profile || null
-  );
+  // Owner profile comes from load data when present, and is fetched client-side
+  // only as a fallback. The two are kept apart and combined with $derived so a
+  // navigation that brings fresh `data` isn't masked by a stale fetched copy —
+  // seeding $state from `data.profile` would capture only its initial value.
+  let fetchedOwnerProfile = $state<{
+    displayName?: string;
+    handle?: string;
+  } | null>(null);
+
+  let ownerProfile = $derived(data.profile ?? fetchedOwnerProfile);
 
   $effect(() => {
     if (directoryOwner && !ownerProfile) {
       const loadOwner = async () => {
         try {
-          const result = await getProfile(fetch);
-          ownerProfile = result;
+          fetchedOwnerProfile = await getProfile(fetch);
         } catch (err) {
           console.error("Could not fetch owner profile:", err);
-          ownerProfile = null;
+          fetchedOwnerProfile = null;
         }
       };
       loadOwner();
@@ -106,7 +109,7 @@
           Welcome to Linkat Directory! No users are currently configured.
         </p>
         <div class="bg-[var(--muted-bg)] rounded-lg p-6 text-left overflow-hidden">
-          <h3 class="font-semibold mb-2">To get started:</h3>
+          <h2 class="font-semibold mb-2">To get started:</h2>
           <ol class="list-decimal list-inside space-y-2 text-sm">
             <li class="break-words">Copy <code class="break-all bg-[var(--card-bg)] px-1 py-0.5 rounded text-xs">. env.example</code> to <code class="break-all bg-[var(--card-bg)] px-1 py-0.5 rounded text-xs">.env</code></li>
             <li class="break-words">Set your DID: <code class="break-all bg-[var(--card-bg)] px-1 py-0.5 rounded text-xs">DIRECTORY_OWNER=did:plc:your-did-here</code></li>
