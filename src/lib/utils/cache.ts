@@ -11,7 +11,7 @@
  * @param ttl Time-to-live in milliseconds (default 1 hour)
  */
 export function setCache<T>(key: string, data: T, ttl: number = 3600000): void {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return;
   }
   const now = new Date().getTime();
@@ -30,18 +30,34 @@ export function setCache<T>(key: string, data: T, ttl: number = 3600000): void {
  * @returns The cached value, or null if missing or expired
  */
 export function getCache<T>(key: string): T | null {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return null;
   }
   const itemStr = localStorage.getItem(key);
   if (!itemStr) {
     return null;
   }
-  const item = JSON.parse(itemStr);
+  // localStorage is visitor-controlled and survives format changes, so a
+  // corrupt or stale entry must never throw out of a profile load.
+  let item: { data?: T; expiry?: number };
+  try {
+    item = JSON.parse(itemStr);
+  } catch {
+    localStorage.removeItem(key);
+    return null;
+  }
+  if (
+    typeof item !== "object" ||
+    item === null ||
+    typeof item.expiry !== "number"
+  ) {
+    localStorage.removeItem(key);
+    return null;
+  }
   const now = new Date().getTime();
   if (now > item.expiry) {
     localStorage.removeItem(key);
     return null;
   }
-  return item.data;
+  return item.data ?? null;
 }
