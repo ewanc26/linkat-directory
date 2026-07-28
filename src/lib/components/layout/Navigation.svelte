@@ -5,8 +5,6 @@
   import { getStores } from "$app/stores";
   const { page } = getStores();
   import { HomeIcon } from "$components/icons";
-
-  let {} = $props();
 </script>
 
 <nav class="flex items-center box-border my-6">
