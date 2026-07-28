@@ -2,10 +2,11 @@
 // Fetches profiles and link boards for all configured users at the root
 // level so child routes have them without refetching.
 
-import { getProfile, safeFetch } from "$components/profile/profile";
+import { getProfile } from "$components/profile/profile";
 import type { Profile, LinkBoard } from "$components/shared";
 import { LINKAT_USERS } from "$lib/config/linkat-users";
 import { env } from "$env/dynamic/public";
+import { parseLinkBoard, safePdsOrigin } from "$utils/untrusted";
 
 // Module-level cache so route transitions don't re-fetch the same data
 let profile: Profile | undefined;
@@ -15,18 +16,30 @@ let dynamicLinks: LinkBoard | undefined;
  * Resolve a DID to its PDS endpoint via Slingshot.
  * Slingshot returns { did, handle, pds } from a lightweight identity document.
  */
-async function resolveIdentity(identifier: string, fetch: typeof globalThis.fetch): Promise<{ did: string; handle: string; pds: string }> {
+async function resolveIdentity(
+  identifier: string,
+  fetch: typeof globalThis.fetch,
+): Promise<{ did: string; handle: string; pds: string }> {
   const response = await fetch(
-    `https://slingshot.microcosm.blue/xrpc/com.bad-example.identity.resolveMiniDoc?identifier=${encodeURIComponent(identifier)}`
+    `https://slingshot.microcosm.blue/xrpc/com.bad-example.identity.resolveMiniDoc?identifier=${encodeURIComponent(identifier)}`,
   );
   if (!response.ok) {
-    throw new Error(`Failed to resolve identifier via Slingshot: ${response.status}`);
+    throw new Error(
+      `Failed to resolve identifier via Slingshot: ${response.status}`,
+    );
   }
   const data = await response.json();
-  if (!data.did || !data.pds) {
+  // The resolver is a third party: only an https origin with no credentials,
+  // path, query, or fragment may become the base of a later request URL.
+  const pds = safePdsOrigin(data?.pds);
+  if (typeof data?.did !== "string" || !pds) {
     throw new Error("Invalid response from identity resolver");
   }
-  return { did: data.did, handle: data.handle || data.did, pds: data.pds };
+  return {
+    did: data.did,
+    handle: typeof data.handle === "string" ? data.handle : data.did,
+    pds,
+  };
 }
 
 export async function load({ fetch }) {
@@ -78,11 +91,17 @@ export async function load({ fetch }) {
       const resolved = await resolveIdentity(userDid, fetch);
 
       const rawResponse = await fetch(
-        `${resolved.pds}/xrpc/com.atproto.repo.listRecords?repo=${userDid}&collection=blue.linkat.board&rkey=self`
+        `${resolved.pds}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(userDid)}&collection=blue.linkat.board&rkey=self`,
       );
+      // Consume JSON only from a successful response; an error body is not a
+      // record listing, and a failure here must stay non-fatal for other users.
+      if (!rawResponse.ok) {
+        throw new Error(`PDS returned ${rawResponse.status} for ${userDid}`);
+      }
       const response = await rawResponse.json();
-      if (response && response.records && response.records.length > 0) {
-        userLinkBoards[userDid] = response.records[0].value as LinkBoard;
+      if (Array.isArray(response?.records) && response.records.length > 0) {
+        const board = parseLinkBoard(response.records[0]?.value);
+        if (board) userLinkBoards[userDid] = board;
       }
     } catch (error) {
       console.error(`Error fetching dynamic links for ${userDid}:`, error);
@@ -100,8 +119,8 @@ export async function load({ fetch }) {
     dynamicLinks,
     userLinkBoards,
     // Optionally hide the owner's own card so they don't see themselves listed
-    linkatUsers: userDids.filter(did => {
-       const hideOwnerCard = env.HIDE_OWNER_CARD === 'true';
+    linkatUsers: userDids.filter((did) => {
+      const hideOwnerCard = env.HIDE_OWNER_CARD === "true";
       if (hideOwnerCard && did === primaryUserDid) {
         return false;
       }
@@ -109,7 +128,7 @@ export async function load({ fetch }) {
     }),
     noUsersConfigured: false,
     primaryUserDid,
-    displayUserBanner: env.DISPLAY_USER_BANNER === 'true',
-    displayUserDescription: env.DISPLAY_USER_DESCRIPTION === 'true',
+    displayUserBanner: env.DISPLAY_USER_BANNER === "true",
+    displayUserDescription: env.DISPLAY_USER_DESCRIPTION === "true",
   };
 }

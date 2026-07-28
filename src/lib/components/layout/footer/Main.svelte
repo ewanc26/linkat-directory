@@ -4,17 +4,18 @@
   // expandable "About" section with attribution and licensing details.
 
   import { onMount } from "svelte";
+  import type { Profile } from "$components/shared";
 
-  export let profile: any;
-  let showDetails = false;
+  let { profile }: { profile?: Partial<Profile> | null } = $props();
+  let showDetails = $state(false);
 
-  // Set the copyright year on mount since SvelteKit renders the shell
-  // server-side and the current year won't be dynamic otherwise.
+  // Rendered during prerender with the build year, then corrected on mount so
+  // a long-lived deployment does not show a stale year. Previously the year
+  // was written straight into the DOM on mount, which left the prerendered
+  // HTML (and any non-hydrated view) showing an empty copyright.
+  let copyrightYear = $state(new Date().getFullYear());
   onMount(() => {
-    const copyrightYearElement = document.getElementById("copyright-year");
-    if (copyrightYearElement) {
-      copyrightYearElement.textContent = new Date().getFullYear().toString();
-    }
+    copyrightYear = new Date().getFullYear();
   });
 
   function toggleDetails() {
@@ -25,11 +26,11 @@
 <footer class="text-center py-6 text-primary text-sm opacity-60">
   <div class="max-w-2xl mx-auto px-4">
     <div class="mb-3">
-      <span>&copy; <span id="copyright-year"></span></span>
+      <span>&copy; {copyrightYear}</span>
       {#if profile?.handle}
         <span class="mx-2">&bull;</span>
         <a
-          href="https://bsky.app/profile/{profile.did}"
+          href="https://bsky.app/profile/{encodeURIComponent(profile.did ?? profile.handle ?? '')}"
           class="text-[var(--link-color)] hover:text-[var(--link-hover-color)] transition-colors"
         >
           @{profile.handle}
@@ -38,14 +39,16 @@
       <span class="mx-2">&bull;</span>
       <button
         class="text-[var(--link-color)] hover:text-[var(--link-hover-color)] transition-colors underline bg-none border-none cursor-pointer text-sm"
-        on:click={toggleDetails}
+        onclick={toggleDetails}
+        aria-expanded={showDetails}
+        aria-controls="footer-details"
       >
         {showDetails ? 'Hide details' : 'About'}
       </button>
     </div>
 
     {#if showDetails}
-      <div class="text-xs opacity-75 leading-relaxed space-y-2 transition-all duration-200">
+      <div id="footer-details" class="text-xs opacity-75 leading-relaxed space-y-2 transition-all duration-200">
         <div>
           Linkat Directory made by
           <a

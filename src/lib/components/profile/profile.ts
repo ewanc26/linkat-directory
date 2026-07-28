@@ -3,6 +3,7 @@
 
 import { env } from "$env/dynamic/public";
 import { getCache, setCache } from "$utils/cache";
+import { safeMediaUrl, safePdsOrigin } from "$utils/untrusted";
 import type { Profile } from "$components/shared";
 
 /**
@@ -14,7 +15,9 @@ export async function safeFetch(url: string, fetch: typeof globalThis.fetch) {
   try {
     const response = await fetch(url);
     if (!response.ok)
-      throw new Error(`HTTP error! status: ${response.status}, statusText: ${response.statusText}`);
+      throw new Error(
+        `HTTP error! status: ${response.status}, statusText: ${response.statusText}`,
+      );
     return await response.json();
   } catch (error: unknown) {
     console.error(`Network error fetching ${url}:`, error);
@@ -31,18 +34,30 @@ export async function safeFetch(url: string, fetch: typeof globalThis.fetch) {
  * Slingshot is a lightweight AT Protocol identity microservice that returns the
  * user's DID, handle, and PDS URL without requiring full PLC directory lookups.
  */
-async function resolveIdentity(identifier: string, fetch: typeof globalThis.fetch): Promise<{ did: string; handle: string; pds: string }> {
+async function resolveIdentity(
+  identifier: string,
+  fetch: typeof globalThis.fetch,
+): Promise<{ did: string; handle: string; pds: string }> {
   const response = await fetch(
-    `https://slingshot.microcosm.blue/xrpc/com.bad-example.identity.resolveMiniDoc?identifier=${encodeURIComponent(identifier)}`
+    `https://slingshot.microcosm.blue/xrpc/com.bad-example.identity.resolveMiniDoc?identifier=${encodeURIComponent(identifier)}`,
   );
   if (!response.ok) {
-    throw new Error(`Failed to resolve identifier via Slingshot: ${response.status}`);
+    throw new Error(
+      `Failed to resolve identifier via Slingshot: ${response.status}`,
+    );
   }
   const data = await response.json();
-  if (!data.did || !data.pds) {
+  // Resolver responses are untrusted: only a bare https origin is usable as
+  // the base of a later AT Protocol request URL.
+  const pds = safePdsOrigin(data?.pds);
+  if (typeof data?.did !== "string" || !pds) {
     throw new Error("Invalid response from identity resolver");
   }
-  return { did: data.did, handle: data.handle || data.did, pds: data.pds };
+  return {
+    did: data.did,
+    handle: typeof data.handle === "string" ? data.handle : data.did,
+    pds,
+  };
 }
 
 /**
@@ -55,8 +70,14 @@ async function resolveIdentity(identifier: string, fetch: typeof globalThis.fetc
  *
  * Throws if either the profile fetch or identity resolution fails.
  */
-export async function getProfile(fetch: typeof globalThis.fetch): Promise<Profile> {
-  const cacheKey = `profile_${env.DIRECTORY_OWNER}`;
+export async function getProfile(
+  fetch: typeof globalThis.fetch,
+): Promise<Profile> {
+  const owner = env.DIRECTORY_OWNER ?? "";
+  if (!owner) {
+    throw new Error("DIRECTORY_OWNER is not configured");
+  }
+  const cacheKey = `profile_${owner}`;
   let profile: Profile | null = getCache<Profile>(cacheKey);
 
   if (profile) {
@@ -66,16 +87,18 @@ export async function getProfile(fetch: typeof globalThis.fetch): Promise<Profil
   try {
     // Step 1: fetch profile from the Bluesky public API
     const fetchProfile = await safeFetch(
-      `https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${env.DIRECTORY_OWNER}`,
-      fetch
+      `https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(owner)}`,
+      fetch,
     );
 
     // Step 2: resolve PDS via Slingshot so we know where to send AT Protocol requests
     const resolved = await resolveIdentity(fetchProfile["did"], fetch);
 
     profile = {
-      avatar: fetchProfile["avatar"],
-      banner: fetchProfile["banner"],
+      // Remote media URLs are scheme-checked before they can reach an img src
+      // or a CSS background.
+      avatar: safeMediaUrl(fetchProfile["avatar"]) ?? "",
+      banner: safeMediaUrl(fetchProfile["banner"]) ?? "",
       displayName: fetchProfile["displayName"],
       did: fetchProfile["did"],
       handle: fetchProfile["handle"],

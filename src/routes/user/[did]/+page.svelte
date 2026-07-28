@@ -5,11 +5,9 @@
 
   import DynamicLinks from "$lib/components/layout/main/DynamicLinks.svelte";
   import DynamicHead from "$lib/components/layout/DynamicHead.svelte";
-  import { getStores } from "$app/stores";
   import { env } from "$env/dynamic/public";
   import { getProfile } from "$components/profile/profile";
 
-  const { page } = getStores();
   let { data } = $props();
 
   let profile = $derived(data.profile);
@@ -78,13 +76,13 @@
   {#if error}
     <!-- ── Error state ────────────────────────────────────────────── -->
     <div class="text-center py-8">
-      <h1 class="text-2xl font-bold mb-4">Error</h1>
+      <h2 class="text-2xl font-bold mb-4">Error</h2>
       <p class="text-[var(--error-color)]">{error}</p>
     </div>
   {:else if !profile}
     <!-- ── Not found ──────────────────────────────────────────────── -->
     <div class="text-center py-8">
-      <h1 class="text-2xl font-bold mb-4">User Not Found</h1>
+      <h2 class="text-2xl font-bold mb-4">User Not Found</h2>
       <p class="text-[var(--placeholder-color)]">The user with DID {did} was not found.</p>
     </div>
   {:else}
@@ -107,7 +105,7 @@
           {/if}
 
           <div class="text-center sm:text-left">
-            <h1 class="text-2xl font-bold">{profile.displayName || profile.handle}</h1>
+            <h2 class="text-2xl font-bold">{profile.displayName || profile.handle}</h2>
             <p class="text-[var(--secondary-text-color)]">@{profile.handle}</p>
             <code class="text-[var(--secondary-text-color)] text-sm">{did}</code>
             {#if profile.description}

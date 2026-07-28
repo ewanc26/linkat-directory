@@ -11,7 +11,6 @@
 
   let profile = $state<{ displayName?: string; handle?: string } | null>(null);
   let loading = $state(true);
-  let error = $state<string | null>(null);
 
   $effect(() => {
     if (env.DIRECTORY_OWNER) {
@@ -19,11 +18,11 @@
       getProfile(fetch)
         .then((p) => {
           profile = p;
-          error = null;
         })
         .catch((err) => {
+          // The header falls back to the raw DID, so a profile outage is not
+          // surfaced as an error state here.
           console.error('Failed to load profile:', err);
-          error = err.message;
           profile = null;
         })
         .finally(() => {

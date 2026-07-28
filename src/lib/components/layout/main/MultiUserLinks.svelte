@@ -4,11 +4,11 @@
   // one user has links, the header label is hidden to keep the UI clean.
 
   import ArchiveCard from "$lib/components/archive/ArchiveCard.svelte";
-  import type { LinkBoard } from "$components/shared";
+  import type { LinkBoard, Profile } from "$components/shared";
 
   let { userLinkBoards = {}, profile }: {
     userLinkBoards?: { [did: string]: LinkBoard | undefined },
-    profile: any
+    profile?: Partial<Profile> | null
   } = $props();
 
   // Collapse the boards map into a clean array, dropping users with no cards
@@ -17,7 +17,7 @@
     .map(([did, board]) => ({ did, board: board! })));
 
   function getUserDisplayName(did: string): string {
-    if (did === profile.did) {
+    if (profile && did === profile.did) {
       return profile.displayName || "My Links";
     }
     // Future: resolve profiles for non-primary users to show real names

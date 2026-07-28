@@ -9,7 +9,7 @@
   let { data }: { data: LinkBoard | undefined } = $props();
 </script>
 
-{#if data && data.cards.length > 0}
+{#if data?.cards?.length}
   <div class="mb-12">
     <div
       class="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr)_)] gap-x-6 gap-y-6 my-6"
