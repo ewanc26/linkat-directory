@@ -1,7 +1,7 @@
 // ── Profile Fetching ──────────────────────────────────────────────────
 // Bluesky profile retrieval with local caching and PDS resolution via Slingshot.
 
-import { env } from "$env/dynamic/public";
+import { env } from "$lib/config/public-env";
 import { getCache, setCache } from "$utils/cache";
 import { safeMediaUrl, safePdsOrigin } from "$utils/untrusted";
 import type { Profile } from "$components/shared";

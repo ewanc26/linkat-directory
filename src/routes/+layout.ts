@@ -5,7 +5,7 @@
 import { getProfile } from "$components/profile/profile";
 import type { Profile, LinkBoard } from "$components/shared";
 import { LINKAT_USERS } from "$lib/config/linkat-users";
-import { env } from "$env/dynamic/public";
+import { env } from "$lib/config/public-env";
 import { parseLinkBoard, safePdsOrigin } from "$utils/untrusted";
 
 // Module-level cache so route transitions don't re-fetch the same data

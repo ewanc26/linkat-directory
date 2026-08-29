@@ -3,7 +3,7 @@
 // live under /user/[did], which a crawler cannot enumerate, so each
 // configured DID is listed explicitly.
 
-import { env } from "$env/dynamic/public";
+import { env } from "$lib/config/public-env";
 import { LINKAT_USERS } from "$lib/config/linkat-users";
 import type { RequestHandler } from "./$types";
 
