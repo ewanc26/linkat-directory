@@ -3,7 +3,7 @@
   // Top bar showing the directory title, computed from the owner's profile.
   // On user detail pages, a "Home" link replaces the empty space.
 
-  import { env } from "$env/dynamic/public";
+  import { env } from "$lib/config/public-env";
   import { page } from "$app/stores";
   import { getProfile } from "$components/profile/profile";
 

@@ -1,7 +1,7 @@
 // ── Linkat User Configuration ─────────────────────────────────────────
 // Parses DIRECTORY_OWNER and PUBLIC_LINKAT_USERS env vars into a user list.
 
-import { env } from "$env/dynamic/public";
+import { env } from "$lib/config/public-env";
 
 /**
  * Configures which users appear in the directory.
@@ -23,9 +23,9 @@ function parseUsersFromEnv(): string[] {
 
   // Append additional users, filtering out the owner to avoid duplicates
   if (env.PUBLIC_LINKAT_USERS) {
-    const envUsers = env.PUBLIC_LINKAT_USERS.split(',')
-      .map(did => did.trim())
-      .filter(did => did.startsWith('did:') && did !== env.DIRECTORY_OWNER);
+    const envUsers = env.PUBLIC_LINKAT_USERS.split(",")
+      .map((did) => did.trim())
+      .filter((did) => did.startsWith("did:") && did !== env.DIRECTORY_OWNER);
     users.push(...envUsers);
   }
 

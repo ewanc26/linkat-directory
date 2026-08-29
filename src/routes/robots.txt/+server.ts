@@ -3,7 +3,7 @@
 // carry an absolute URL, and this directory is self-hosted under whatever
 // origin the operator configures via PUBLIC_ORIGIN.
 
-import { env } from "$env/dynamic/public";
+import { env } from "$lib/config/public-env";
 import type { RequestHandler } from "./$types";
 
 export const prerender = true;

@@ -5,7 +5,7 @@
 
   import DynamicLinks from "$lib/components/layout/main/DynamicLinks.svelte";
   import DynamicHead from "$lib/components/layout/DynamicHead.svelte";
-  import { env } from "$env/dynamic/public";
+  import { env } from "$lib/config/public-env";
   import { getProfile } from "$components/profile/profile";
 
   let { data } = $props();

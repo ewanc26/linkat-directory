@@ -3,7 +3,7 @@
   // Shows the user directory grid or, if no users are configured, a setup guide.
   // Metadata is generated dynamically from the owner's profile display name.
 
-  import { env } from "$env/dynamic/public";
+  import { env } from "$lib/config/public-env";
   import UserDirectory from "$lib/components/archive/UserDirectory.svelte";
   import DynamicHead from "$lib/components/layout/DynamicHead.svelte";
   import { getProfile } from "$lib/components/profile/profile";
