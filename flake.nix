@@ -1,4 +1,4 @@
-# Nix dev shell: Node 22 + pnpm for linkat-directory development
+# Nix dev shell: Node 22 for linkat-directory development
 {
   description = "linkat-directory — AT Protocol link directory";
 
@@ -13,10 +13,10 @@
         let pkgs = nixpkgs.legacyPackages.${system}; in
         {
           default = pkgs.mkShell {
-            packages = with pkgs; [ nodejs_22 pnpm ];
+            packages = with pkgs; [ nodejs_22 ];
 
             shellHook = ''
-              echo "linkat-directory dev shell ready (Node.js 22 + pnpm)"
+              echo "linkat-directory dev shell ready (Node.js 22)"
             '';
           };
         }
